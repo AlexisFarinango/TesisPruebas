@@ -9,6 +9,7 @@ import RecuperarContra from "./screens/RecoverPassword";
 import StudentNavigation from "./RoutesStudent";
 import TeacherNavigation from "./RoutesTeacher";
 import { AuthProvider } from './context/AuthContext'; // Ajusta la ruta según tu estructura
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 enableScreens();
@@ -16,9 +17,11 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainApp />
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <MainApp />
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
 

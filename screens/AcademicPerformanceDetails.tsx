@@ -4,6 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL_BACKEND } from '@env';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function DetallesActuaciones() {
     const [fechas, setFechas] = useState([]);
@@ -29,6 +30,7 @@ export default function DetallesActuaciones() {
 
             setFechas(response.data.fecha_actuaciones);
             setDetalles(response.data.descripciones);
+            console.log("datitos", response.data.descripciones);
             setTotalactuaciones(response.data.cantidad_actuaciones);
 
         } catch (error) {
@@ -42,9 +44,9 @@ export default function DetallesActuaciones() {
 
     const handleDescriptionPress = (index) => {
         const descripciones = detalles[index];
-        console.log("Presionado:",detalles[index]);
-        console.log("Presionado:",detalles.length);
-        
+        console.log("Presionado:", detalles[index]);
+        console.log("Presionado:", detalles.length);
+
         if (descripciones && descripciones.length > 0) {
             setSelectedDescriptions(descripciones);
             setModalVisible(true);
@@ -99,23 +101,25 @@ export default function DetallesActuaciones() {
                 <View style={styles.modalBackground}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Descripciones</Text>
-                        <View style={styles.table}>
+                        <ScrollView style={styles.table}>
                             <View style={[styles.tableRow, styles.tableHeaderRow]}>
                                 <Text style={styles.tableHeader}>Descripciones</Text>
                             </View>
-                            {selectedDescriptions.length > 0 ? (
-                                
+                            <FlatList
+                                data={selectedDescriptions.length > 0 ? selectedDescriptions : ['Sin descripciones']}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableCell}>{selectedDescriptions}</Text>
+                                        <Text style={styles.tableCell}>{item}</Text>
                                     </View>
-                                )
-                             : (
-                                <View style={styles.tableRow}>
-                                    <Text style={styles.tableCell}>Sin descripciones</Text>
-                                </View>
-                            )}
-                        </View>
-
+                                )}
+                                ListEmptyComponent={
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableCell}>Sin descripciones</Text>
+                                    </View>
+                                }
+                            />
+                        </ScrollView>
                         <TouchableOpacity
                             style={styles.closeButton}
                             onPress={() => setModalVisible(false)}
@@ -125,6 +129,7 @@ export default function DetallesActuaciones() {
                     </View>
                 </View>
             </Modal>
+
         </View>
     );
 }
@@ -167,13 +172,16 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
+        paddingVertical: 40, // Reducir espacio para centrar mejor el modal
     },
     modalContent: {
         width: '80%',
+        maxHeight: '80%', // Limitar la altura máxima del modal
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 20,
         alignItems: "center",
+        justifyContent: "flex-start", // Ajustar alineación del contenido
     },
     modalTitle: {
         fontSize: 20,
