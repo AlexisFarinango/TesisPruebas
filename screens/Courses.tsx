@@ -98,7 +98,7 @@ export default function Materias() {
                     <View key={index} style={styles.cursoCard}>
                         <Text style={styles.cursoNombre}>{curso.materia}</Text>
                         <Text style={styles.cursoInfo}>Paralelo: {curso.paralelo}</Text>
-                        <Text style={styles.cursoInfo}>Docente: {curso.docente}</Text>
+                        <Text style={styles.cursoInfo}>Docente: {curso.docente.nombre} {curso.docente.apellido}</Text>
                     </View>
                 ))}
             </ScrollView>
