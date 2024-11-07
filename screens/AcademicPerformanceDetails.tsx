@@ -4,7 +4,6 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL_BACKEND } from '@env';
-import { ScrollView } from 'react-native-gesture-handler';
 
 export default function DetallesActuaciones() {
     const [fechas, setFechas] = useState([]);
@@ -101,25 +100,30 @@ export default function DetallesActuaciones() {
                 <View style={styles.modalBackground}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Descripciones</Text>
-                        <ScrollView style={styles.table}>
+                        <View style={styles.table}>
                             <View style={[styles.tableRow, styles.tableHeaderRow]}>
                                 <Text style={styles.tableHeader}>Descripciones</Text>
                             </View>
-                            <FlatList
-                                data={selectedDescriptions.length > 0 ? selectedDescriptions : ['Sin descripciones']}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={({ item }) => (
+                            {selectedDescriptions.length > 0 ? (
+                                Array.isArray(selectedDescriptions) ? (
+                                    selectedDescriptions.map((descripcion, index) => (
+                                        <View key={index} style={styles.tableRow}>
+                                            <Text style={styles.tableCell}>{descripcion}</Text>
+                                        </View>
+                                    ))
+                                ) : (
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableCell}>{item}</Text>
+                                        <Text style={styles.tableCell}>{selectedDescriptions}</Text>
                                     </View>
-                                )}
-                                ListEmptyComponent={
-                                    <View style={styles.tableRow}>
-                                        <Text style={styles.tableCell}>Sin descripciones</Text>
-                                    </View>
-                                }
-                            />
-                        </ScrollView>
+                                )
+                            ) : (
+                                <View style={styles.tableRow}>
+                                    <Text style={styles.tableCell}>Sin descripciones</Text>
+                                </View>
+                            )}
+                            
+                        </View>
+
                         <TouchableOpacity
                             style={styles.closeButton}
                             onPress={() => setModalVisible(false)}
@@ -129,7 +133,6 @@ export default function DetallesActuaciones() {
                     </View>
                 </View>
             </Modal>
-
         </View>
     );
 }
@@ -172,16 +175,13 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
-        paddingVertical: 40, // Reducir espacio para centrar mejor el modal
     },
     modalContent: {
         width: '80%',
-        maxHeight: '80%', // Limitar la altura máxima del modal
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 20,
         alignItems: "center",
-        justifyContent: "flex-start", // Ajustar alineación del contenido
     },
     modalTitle: {
         fontSize: 20,
