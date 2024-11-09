@@ -13,14 +13,15 @@ export default function DetallesActuaciones() {
     const [selectedDescriptions, setSelectedDescriptions] = useState([]);
     const route = useRoute();
     const navigation = useNavigation();
-    const { materia, paralelo } = route.params;
+    const { materia, paralelo, semestre } = route.params;
 
-    const obtenerActuaciones = async (materia, paralelo) => {
+    const obtenerActuaciones = async (materia, paralelo, semestre) => {
         const token = await AsyncStorage.getItem("userToken");
         try {
             const response = await axios.post(`${API_URL_BACKEND}/estudiante/visualizar-actuaciones`, {
                 materia: materia,
-                paralelo: paralelo
+                paralelo: paralelo,
+                semestre: semestre
             }, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -38,7 +39,7 @@ export default function DetallesActuaciones() {
     };
 
     useEffect(() => {
-        obtenerActuaciones(materia, paralelo);
+        obtenerActuaciones(materia, paralelo, semestre);
     }, []);
 
     const handleDescriptionPress = (index) => {
@@ -68,8 +69,8 @@ export default function DetallesActuaciones() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Detalle Actuaciones</Text>
-            <View style={styles.table}>
+            <Text style={styles.title}>Detalle Actuaciones{"\n"} Semestre {semestre}</Text>
+            {/* <View style={styles.table}>
                 <View style={[styles.tableRow, styles.tableHeaderRow]}>
                     <Text style={styles.tableHeader}>Fecha</Text>
                     <Text style={styles.tableHeader}>Descripciones</Text>
@@ -85,7 +86,33 @@ export default function DetallesActuaciones() {
                 <View style={[styles.tableRow, styles.tableHeaderRow]}>
                     <Text style={styles.tableHeader}>Actuaciones Totales: {totalactuaciones}</Text>
                 </View>
-            </View>
+            </View> */}
+            {detalles.length === 0 ? (
+                <Text style={styles.noDataText}>No existen Actuaciones por el momento</Text>
+            ) : (
+                <>
+                    <View style={styles.table}>
+                        <View style={[styles.tableRow, styles.tableHeaderRow]}>
+                            <Text style={styles.tableHeader}>Fecha</Text>
+                            <Text style={styles.tableHeader}>Descripciones</Text>
+                        </View>
+                        <FlatList
+                            data={fechas}
+                            renderItem={renderItem}
+                            keyExtractor={(item, index) => index.toString()}
+                            style={{ flexGrow: 1 }}
+                        />
+                    </View>
+
+                    <View style={styles.table}>
+                        <View style={[styles.tableRow, styles.tableHeaderRow]}>
+                            <Text style={styles.tableHeader}>Actuaciones Totales: {totalactuaciones}</Text>
+                        </View>
+                    </View>
+                </>
+            )}
+
+
 
             <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
                 <Text style={styles.buttonText}>Regresar</Text>
@@ -121,7 +148,7 @@ export default function DetallesActuaciones() {
                                     <Text style={styles.tableCell}>Sin descripciones</Text>
                                 </View>
                             )}
-                            
+
                         </View>
 
                         <TouchableOpacity
@@ -235,5 +262,12 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 16,
+    },
+    noDataText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'gray',
+        textAlign: 'center',
+        marginVertical: 20,
     },
 });

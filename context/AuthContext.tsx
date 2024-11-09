@@ -54,7 +54,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
       console.log("Esto es la data del usuario",response.data);
       setUserData(response.data); // Guardar la información decodificada
-      console.log(userData);
     } catch (error) {
       console.log(error);
     }

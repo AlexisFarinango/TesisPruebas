@@ -41,7 +41,7 @@ export default function Asistencias() {
             color: "#fff", // Letras blancas
             fontWeight: "bold",
             fontSize: 14,
-            width: 125,  // Ancho de cada columna (ajustable según necesidad)
+            width: 95,  // Ancho de cada columna (ajustable según necesidad)
             textAlign: "center",
         },
         tableRow: {
@@ -149,6 +149,13 @@ export default function Asistencias() {
             maxHeight: 200,
             width: '100%',
         },
+        noDataText: {
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: 'gray',
+            textAlign: 'center',
+            marginVertical: 20,
+        },
     });
 
 
@@ -159,6 +166,7 @@ export default function Asistencias() {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedMateria, setSelectedMateria] = useState(null);
     const [selectedParalelo, setSelectedParalelo] = useState(null);
+    const [selectedSemestre, setSelectedSemestre] = useState(null);
     const [cursos, setCursos] = useState([]);
     const [asistencias, setAsistencias] = useState([]);
     const [estadoAsistencias, setEstadoasistencias] = useState([]);
@@ -196,7 +204,8 @@ export default function Asistencias() {
         try {
             const response = await axios.post(`${API_URL_BACKEND}/estudiante/visualizar-asistencias`, {
                 materia: selectedMateria,
-                paralelo: selectedParalelo
+                paralelo: selectedParalelo,
+                semestre: selectedSemestre
             }, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -218,10 +227,10 @@ export default function Asistencias() {
         updateCursos();
     }, []);
     useEffect(() => {
-        if (selectedMateria && selectedParalelo) {
+        if (selectedMateria && selectedParalelo && selectedSemestre) {
             updateAsistencias();
         }
-    }, [selectedMateria, selectedParalelo]);
+    }, [selectedMateria, selectedParalelo, selectedSemestre]);
 
 
 
@@ -251,7 +260,7 @@ export default function Asistencias() {
     // };
     const navigation = useNavigation();
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={() => { setSelectedMateria(item.materia); setSelectedParalelo(item.paralelo); setModalVisible(true) }}>
+        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={() => { setSelectedMateria(item.materia); setSelectedParalelo(item.paralelo);setSelectedSemestre(item.semestre); setModalVisible(true) }}>
             <Text style={styles.cardText}>{item.materia}</Text>
         </TouchableOpacity>
     );
@@ -263,41 +272,48 @@ export default function Asistencias() {
             <FlatList
                 data={cursos}
                 renderItem={renderItem}
-                keyExtractor={item => item.materia.toString()}
+                keyExtractor={(item) => item.materia.toString()}
                 numColumns={2}
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={styles.grid}
             />
-            <Modal visible={modalVisible} animationType="slide" transparent={true} onRequestClose={() => setModalVisible(false)}>
+            <Modal
+                visible={modalVisible}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setModalVisible(false)}
+            >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.title}>{selectedMateria} - Asistencias</Text>
-                        <View style={styles.tableHeader}>
-                            <Text style={styles.headertableText}>Fecha</Text>
-                            <Text style={styles.headertableText}>Asistencias</Text>
-                        </View>
-                        <ScrollView style={styles.scrollView}>
-                            {/* {asistencias[selectedMateria]?.map((asistencia, index) => (
-                                <View key={index} style={styles.tableRow}>
-                                    <Text style={styles.rowText}>{asistencia.fecha_asistencias}</Text>
-                                    <Text style={styles.rowText}>{asistencia.estado_asistencias}</Text>
+                        {asistencias.length === 0 ? (
+                            <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
+                        ) : (
+                            <>
+                                <View style={styles.tableHeader}>
+                                    <Text style={styles.headertableText}>Fecha</Text>
+                                    <Text style={styles.headertableText}>Horario</Text>
+                                    <Text style={styles.headertableText}>Asistencias</Text>
                                 </View>
-                            ))} */}
-                            {asistencias.map((fecha, index) => (
-                                <View key={index} style={styles.tableRow}>
-                                    <Text style={styles.rowText}>{fecha}</Text>
-                                    <Text style={styles.rowText}>{estadoAsistencias[index]}</Text>
-                                </View>
-                            ))}
-
-                        </ScrollView>
-                        <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                                <ScrollView style={styles.scrollView}>
+                                    {asistencias.map((fecha, index) => (
+                                        <View key={index} style={styles.tableRow}>
+                                            <Text style={styles.rowText}>{fecha}</Text>
+                                            {/* <Text style={styles.rowText}>{horario[index]}</Text> */}
+                                            <Text style={styles.rowText}>{estadoAsistencias[index]}</Text>
+                                        </View>
+                                    ))}
+                                </ScrollView>
+                            </>
+                        )}
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => setModalVisible(false)}
+                        >
                             <Text style={styles.closeButtonText}>Cerrar</Text>
                         </TouchableOpacity>
                     </View>
-
                 </View>
-
             </Modal>
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Modulos')}>
@@ -322,5 +338,5 @@ export default function Asistencias() {
                 </TouchableOpacity>
             </View>
         </View>
-    );
+    );    
 }

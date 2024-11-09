@@ -8,31 +8,20 @@ import { API_URL_BACKEND } from '@env';
 import { launchCamera } from 'react-native-image-picker';
 
 export default function RegistroEstudiante() {
-  const [nombre, setNombre] = useState("");
-  const [apellido, setApellido] = useState("");
-  const [cedula, setCedula] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fecha_nacimiento, setFecha_nacimiento] = useState(new Date());
-  const [direccion, setDireccion] = useState("");
-  const [ciudad, setCiudad] = useState("");
-  const [telefono, setTelefono] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const navigation = useNavigation();
-  const [foto, setFoto] = useState(null);
-  
   const [form, setForm] = useState({
     nombre: "",
     apellido: "",
     cedula: "",
     email: "",
     password: "",
-    fecha_nacimiento: "",
+    fecha_nacimiento: new Date(),
     direccion: "",
     ciudad: "",
     telefono: "",
     fotografia: "",
-});
+  });
 
   // Solicitar permiso para la cámara
   const requestCameraPermission = async () => {
@@ -57,7 +46,7 @@ export default function RegistroEstudiante() {
             console.log('Error al lanzar la cámara:', response.error);
           } else {
             console.log('Foto capturada:', response.assets);
-            setFoto(response.assets[0].uri); // Guarda la URI de la foto
+            setForm({ ...form, fotografia: response.assets[0].uri }); // Guarda la URI de la foto
           }
         });
       } else {
@@ -69,142 +58,104 @@ export default function RegistroEstudiante() {
   };
 
   const handleRegistro = async () => {
-    if (!form) {
+    const { nombre, apellido, cedula, email, password, direccion, ciudad, telefono, fecha_nacimiento, fotografia } = form;
+    if (!nombre || !apellido || !cedula || !email || !password || !direccion || !ciudad || !telefono) {
       alert("Por favor, completa todos los campos");
       return;
     } else {
       try {
-        console.log(API_URL_BACKEND);
+        const formData = new FormData();
+        Object.keys(form).forEach((key) => {
+          if (key === 'fotografia' && fotografia) {
+            formData.append('fotografia', {
+              uri: fotografia,
+              type: 'png/jpeg',
+              name: 'fotografia.jpg',
+            });
+          } else {
+            formData.append(key, form[key]);
+          }
+        });
+        formData.append('fecha_nacimiento', fecha_nacimiento.toISOString());
 
-        const response = await axios.post(`${API_URL_BACKEND}/estudiante/registro-estudiante`, {
-          nombre: form.nombre,
-          apellido: form.apellido,
-          cedula: form.cedula,
-          email: form.email,
-          password: form.password,
-          fecha_nacimiento: form.fecha_nacimiento,
-          direccion: form.direccion,
-          ciudad: form.ciudad,
-          telefono: form.telefono,
-          fotografia: form.fotografia,
+        const response = await axios.post(`${API_URL_BACKEND}/estudiante/registro-estudiante`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
 
         if (response.status === 200) {
-          console.log("Datos del Estudiante:", { nombre, email, password });
-          setNombre("");
-          setEmail("");
-          setPassword("");
-          Toast.show({
-            type: 'success',
-            text1: 'Usuario Registrado',
-            text2: 'Sus datos fueron ingresados con éxito',
+          setForm({
+            nombre: "",
+            apellido: "",
+            cedula: "",
+            email: "",
+            password: "",
+            fecha_nacimiento: new Date(),
+            direccion: "",
+            ciudad: "",
+            telefono: "",
+            fotografia: "",
           });
-          setTimeout(() => {
-            navigation.navigate('Iniciar Sesion');
-          }, 5000);
+          Toast.show({ type: 'success', text1: 'Usuario Registrado', text2: 'Sus datos fueron ingresados con éxito' });
+          setTimeout(() => navigation.navigate('Iniciar Sesion'), 5000);
         }
       } catch (error) {
-        console.log("Error al registrarse",error);
+        console.log("Error al registrarse", error);
         Toast.show({
           type: 'error',
           text1: 'Error',
           text2: 'Ocurrió un error, intente nuevamente',
         });
-        
       }
     }
   };
 
-  const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate || fecha_nacimiento;
-    setShowDatePicker(false); // En Android se oculta automáticamente
-    setFecha_nacimiento(currentDate);
+
+  const handleChange = (name, value) => {
+    setForm({ ...form, [name]: value });
   };
+
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setForm({ ...form, fecha_nacimiento: selectedDate });
+    }
+  };
+  
 
   const formatDate = (date) => {
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    if (date instanceof Date && !isNaN(date)) {
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    }
+    return "Fecha no seleccionada";
   };
-
+  
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <Text style={styles.title}>Pantalla de Registro Estudiante</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="Nombres Completos"
-            value={nombre}
-            onChangeText={setNombre}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Apellidos Completos"
-            value={apellido}
-            onChangeText={setApellido}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Cédula"
-            keyboardType="numeric"
-            value={cedula}
-            onChangeText={setCedula}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Correo Electrónico"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
+          <TextInput style={styles.input} placeholder="Nombres Completos" value={form.nombre} onChangeText={(value) => handleChange('nombre', value)} />
+          <TextInput style={styles.input} placeholder="Apellidos Completos" value={form.apellido} onChangeText={(value) => handleChange('apellido', value)} />
+          <TextInput style={styles.input} placeholder="Cédula" keyboardType="numeric" value={form.cedula} onChangeText={(value) => handleChange('cedula', value)} />
+          <TextInput style={styles.input} placeholder="Correo Electrónico" keyboardType="email-address" value={form.email} onChangeText={(value) => handleChange('email', value)} />
+          <TextInput style={styles.input} placeholder="Contraseña" secureTextEntry value={form.password} onChangeText={(value) => handleChange('password', value)} />
+          
           <Text style={styles.label}>Fecha de Nacimiento</Text>
           <Button title="Seleccionar Fecha" onPress={() => setShowDatePicker(true)} />
-          {showDatePicker && (
-            <DateTimePicker
-              value={fecha_nacimiento}
-              mode="date"
-              display="default"
-              onChange={onChangeDate}
-            />
-          )}
+          {showDatePicker && <DateTimePicker value={form.fecha_nacimiento} mode="date" display="default" onChange={onChangeDate} />}
+          <Text style={styles.selectedDate}>Fecha seleccionada: {formatDate(form.fecha_nacimiento)}</Text>
 
-          <Text style={styles.selectedDate}>
-            {`Fecha seleccionada: ${formatDate(fecha_nacimiento)}`}
-          </Text>
+          <TextInput style={styles.input} placeholder="Dirección" value={form.direccion} onChangeText={(value) => handleChange('direccion', value)} />
+          <TextInput style={styles.input} placeholder="Ciudad" value={form.ciudad} onChangeText={(value) => handleChange('ciudad', value)} />
+          <TextInput style={styles.input} placeholder="Teléfono" keyboardType="phone-pad" value={form.telefono} onChangeText={(value) => handleChange('telefono', value)} />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Dirección"
-            value={direccion}
-            onChangeText={setDireccion}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Ciudad"
-            value={ciudad}
-            onChangeText={setCiudad}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Teléfono"
-            keyboardType="phone-pad"
-            value={telefono}
-            onChangeText={setTelefono}
-          />
           <View style={styles.profileSection}>
             <Text style={styles.label}>Foto:</Text>
             <TouchableOpacity style={styles.buttonpicture} onPress={requestCameraPermission}>
               <Text style={styles.buttonText}>Tomar Foto</Text>
             </TouchableOpacity>
           </View>
+
           <Button title="Registrarse" onPress={handleRegistro} />
           <Toast />
         </View>

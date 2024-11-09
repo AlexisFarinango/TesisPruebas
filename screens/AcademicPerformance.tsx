@@ -129,6 +129,7 @@ export default function Asistencias() {
     const [cursos,setCursos]=useState([]);
     const[selectedMateria,setSelectedMateria] = useState(null);
     const[selectedParalelo,setSelectedParalelo] = useState(null);
+    const[selectedSemestre,setSelectedSemestre] = useState(null);
 
     // const data = [
     //     { id: 1, title: 'Química', screen:'Detalles Actuaciones'},
@@ -161,7 +162,7 @@ export default function Asistencias() {
 
     const navigation=useNavigation();
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate("Detalles Actuaciones", {materia: item.materia,paralelo: item.paralelo})}>
+        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate("Detalles Actuaciones", {materia: item.materia, paralelo: item.paralelo, semestre: item.semestre})}>
             <Text style={styles.cardText}>{item.materia}</Text>
         </TouchableOpacity>
     );

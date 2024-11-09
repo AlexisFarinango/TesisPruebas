@@ -22,6 +22,8 @@ export default function Materias() {
             });
             if (response.status === 200) {
                 setCursos(response.data.informacionCursos); // Actualizamos el estado de cursos
+                console.log("cursitos",response.data.informacionCursos);
+                
                 Toast.show({
                     type: "success",
                     text1: "Cursos Encontrados",
@@ -97,8 +99,9 @@ export default function Materias() {
                 {cursos.map((curso, index) => (
                     <View key={index} style={styles.cursoCard}>
                         <Text style={styles.cursoNombre}>{curso.materia}</Text>
-                        <Text style={styles.cursoInfo}>Paralelo: {curso.paralelo}</Text>
                         <Text style={styles.cursoInfo}>Docente: {curso.docente.nombre} {curso.docente.apellido}</Text>
+                        <Text style={styles.cursoInfo}>Paralelo: {curso.paralelo}</Text>
+                        <Text style={styles.cursoInfo}>Horario: {curso.horario} {curso.docente.horario}</Text>
                     </View>
                 ))}
             </ScrollView>
