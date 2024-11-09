@@ -87,7 +87,7 @@ export default function DetallesActuaciones() {
                     <Text style={styles.tableHeader}>Actuaciones Totales: {totalactuaciones}</Text>
                 </View>
             </View> */}
-            {detalles.length === 0 ? (
+            {fechas.length === 0 ? (
                 <Text style={styles.noDataText}>No existen Actuaciones por el momento</Text>
             ) : (
                 <>
