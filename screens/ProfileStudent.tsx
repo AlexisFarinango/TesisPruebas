@@ -9,6 +9,7 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { API_URL_BACKEND } from '@env';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KeyboardAvoidingView, Platform } from 'react-native';
 
 const formatearfecha = (fechaISO) => {
     const fecha = new Date(fechaISO);
@@ -69,8 +70,7 @@ export default function PerfilEstudiante() {
                 type: "success",
                 text1: "Actualización Realizada con Éxito",
             });
-            await datosusuario();
-            console.log("Datos Nuevos Form",form);
+            // await datosusuario();
                
             setTimeout(() => {
                 navigation.navigate("Modulos");
@@ -215,6 +215,10 @@ export default function PerfilEstudiante() {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
+            <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
             <View style={styles.container}>
                 <Text style={styles.title}>Perfil de Usuario</Text>
                 <View style={styles.imageContainer}>
@@ -270,6 +274,7 @@ export default function PerfilEstudiante() {
                 </TouchableOpacity>
                 <Toast />
             </View>
+            </KeyboardAvoidingView>
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Modulos')}>
                     <Image source={require('../icons/inicio.png')} style={styles.barNavicon} />
