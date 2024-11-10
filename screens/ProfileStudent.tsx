@@ -51,7 +51,7 @@ export default function PerfilEstudiante() {
                 if (key === 'fotografia' || key === 'fotografia') {
                     formData.append('fotografia', {
                         uri: form.fotografia,
-                        type: 'fotografia/jpeg',
+                        type: 'image/jpeg',
                         name: 'fotografia.jpg',
                     });
                 } else {
