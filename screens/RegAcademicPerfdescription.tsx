@@ -1,12 +1,15 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image,Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Modal, TextInput } from 'react-native';
+import { API_URL_BACKEND } from '@env';
 //import Voice from 'react-native-voice';
 
 export default function DetalleActuaciones() {
     const navigation = useNavigation();
     const route = useRoute();
-    const { materiaId } = route.params; // Obtenemos el ID de la materia desde la navegación
+    const { materia, paralelo, semestre } = route.params; // Obtenemos el ID de la materia desde la navegación
 
     const [actuaciones, setActuaciones] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -85,16 +88,42 @@ export default function DetalleActuaciones() {
     ];
 
     const actuacionesSimuladas = [
-        { _id: '1', nombre: 'Juan Pérez', actuacion: 0 ,descripcion:'' },
-        { _id: '2', nombre: 'María López', actuacion: 0 ,descripcion:'' },
-        { _id: '3', nombre: 'Carlos Sánchez', actuacion: 0 ,descripcion:'' },
-        { _id: '4', nombre: 'Jorge Perez', actuacion: 0 ,descripcion:''},
+        { _id: '1', nombre: 'Juan Pérez', actuacion: 0, descripcion: '' },
+        { _id: '2', nombre: 'María López', actuacion: 0, descripcion: '' },
+        { _id: '3', nombre: 'Carlos Sánchez', actuacion: 0, descripcion: '' },
+        { _id: '4', nombre: 'Jorge Perez', actuacion: 0, descripcion: '' },
     ];
+
+    const updateAsistentes = async (materia, paralelo, semestre) => {
+        try {
+            const token = await AsyncStorage.getItem("userToken")
+            const response = await axios.post(`${API_URL_BACKEND}/actuacion/listar-estudiantes`, {
+                materia: materia,
+                paralelo: paralelo,
+                semestre: semestre
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            // Agregar la propiedad 'cantiactuacionesactuales' inicializada en 0
+            const dataConCantActuaciones = response.data.map((item) => ({
+                ...item,
+                cantiactuacionesactuales: 0
+            }));
+            console.log("Datos Actuaciones completo: ", dataConCantActuaciones);
+
+            setActuaciones(dataConCantActuaciones);
+        } catch (error) {
+            console.log("Error al obtener estudiantes presentes", error);
+
+        }
+    }
 
     // Función para obtener estudiantes que estuvieron presentes en una asistencia simulada
     const obtenerEstudiantesAsistentes = () => {
         const estudiantesPresentesIds = asistenciasSimuladas
-            .filter(asistencia => asistencia.curso == materiaId && asistencia.estado_asistencias == 'presente')
+            .filter(asistencia => asistencia.curso == materia && asistencia.estado_asistencias == 'presente')
             .map(asistencia => asistencia.estudiante);
         console.log('Estudiantes presentes IDs:', estudiantesPresentesIds); // Verifica el filtrado correcto
 
@@ -110,16 +139,18 @@ export default function DetalleActuaciones() {
 
     // Se ejecuta al montar el componente
     useEffect(() => {
-        obtenerEstudiantesAsistentes();
-        console.log("Este es el id recibido de materia", materiaId);
+        updateAsistentes(materia, paralelo, semestre);
+        console.log("Este es el id recibido de materia", materia);
 
-    }, [materiaId]);
+    }, [materia]);
 
     // Función para aumentar actuación de un estudiante
     const aumentarActuacion = (id) => {
-        setActuaciones(prevActuaciones =>
-            prevActuaciones.map(item =>
-                item._id === id ? { ...item, actuacion: item.actuacion + 1 } : item
+        setActuaciones((prevActuaciones) =>
+            prevActuaciones.map((item) =>
+                item.estudiante._id === id && item.cantiactuacionesactuales < 5
+                    ? { ...item, cantiactuacionesactuales: item.cantiactuacionesactuales + 1 }
+                    : item
             )
         );
     };
@@ -128,7 +159,7 @@ export default function DetalleActuaciones() {
     const disminuirActuacion = (id) => {
         setActuaciones(prevActuaciones =>
             prevActuaciones.map(item =>
-                item._id === id && item.actuacion > 0 ? { ...item, actuacion: item.actuacion - 1 } : item
+                item.estudiante._id === id && item.cantiactuacionesactuales > 0 ? { ...item, cantiactuacionesactuales: item.cantiactuacionesactuales - 1 } : item
             )
         );
     };
@@ -136,23 +167,27 @@ export default function DetalleActuaciones() {
     // Función para añadir actuación a todos los estudiantes
     const añadirActuacionATodos = () => {
         setActuaciones(prevActuaciones =>
-            prevActuaciones.map(item => ({ ...item, actuacion: item.actuacion + 1 }))
+            prevActuaciones.map(item =>
+                item.cantiactuacionesactuales < 5
+                    ? { ...item, cantiactuacionesactuales: item.cantiactuacionesactuales + 1 }
+                    : item
+            )
         );
     };
     // Funciones para el manejo del dictado por voz
-                            // useEffect(() => {
-                            //     Voice.onSpeechResults = onSpeechResults;
-                            //     return () => {
-                            //         Voice.destroy().then(Voice.removeAllListeners);
-                            //     };
-                            // }, []);
-                            // const iniciarDictado = async () => {
-                            //     try {
-                            //         await Voice.start('es-ES');
-                            //     } catch (e) {
-                            //         console.error(e);
-                            //     }
-                            // };
+    // useEffect(() => {
+    //     Voice.onSpeechResults = onSpeechResults;
+    //     return () => {
+    //         Voice.destroy().then(Voice.removeAllListeners);
+    //     };
+    // }, []);
+    // const iniciarDictado = async () => {
+    //     try {
+    //         await Voice.start('es-ES');
+    //     } catch (e) {
+    //         console.error(e);
+    //     }
+    // };
     //Funciones manejo Modal para dictado por voz
     const abrirModal = (estudiante) => {
         setCurrentEstudiante(estudiante);
@@ -180,11 +215,11 @@ export default function DetalleActuaciones() {
 
     const renderItem = ({ item }) => (
         <View style={styles.tableRow}>
-            <Text style={styles.tableCell}>{item.nombre}</Text>
-            <Text style={styles.tableCell}>{item.actuacion}</Text>
+            <Text style={styles.tableCell}>{item.estudiante.nombre} {item.estudiante.apellido}</Text>
+            <Text style={styles.tableCell}>{item.cantiactuacionesactuales}</Text>
             <View style={styles.actionsCell}>
                 {/* Botón para disminuir actuación */}
-                <TouchableOpacity onPress={() => disminuirActuacion(item._id)}>
+                <TouchableOpacity onPress={() => disminuirActuacion(item.estudiante._id)}>
                     <Image
                         source={require('../icons/disminuir.png')}
                         style={styles.icon}
@@ -192,7 +227,7 @@ export default function DetalleActuaciones() {
                 </TouchableOpacity>
 
                 {/* Botón para aumentar actuación */}
-                <TouchableOpacity onPress={() => aumentarActuacion(item._id)}>
+                <TouchableOpacity onPress={() => aumentarActuacion(item.estudiante._id)}>
                     <Image
                         source={require('../icons/aumentar.png')}
                         style={styles.icon}
@@ -200,7 +235,7 @@ export default function DetalleActuaciones() {
                 </TouchableOpacity>
 
                 {/* Botón del micrófono o acción */}
-                <TouchableOpacity onPress={()=>abrirModal(item)}>
+                <TouchableOpacity onPress={() => abrirModal(item)}>
                     <Image
                         source={require('../icons/microfono.png')}
                         style={styles.icon}
@@ -213,25 +248,29 @@ export default function DetalleActuaciones() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Detalle Actuaciones</Text>
-            <View style={styles.table}>
-                <View style={[styles.tableRow, styles.tableHeaderRow]}>
-                    <Text style={styles.tableHeader}>Estudiantes</Text>
-                    <Text style={styles.tableHeader}>Actuaciones</Text>
-                    <Text style={styles.tableHeader}>Acciones</Text>
+            {actuaciones.length === 0 ? (
+                <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
+            ) : (<>
+                <View style={styles.table}>
+                    <View style={[styles.tableRow, styles.tableHeaderRow]}>
+                        <Text style={styles.tableHeader}>Estudiantes</Text>
+                        <Text style={styles.tableHeader}>Actuaciones</Text>
+                        <Text style={styles.tableHeader}>Acciones</Text>
+                    </View>
+                    <FlatList
+                        data={actuaciones}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.estudiante._id.toString()}
+                    />
                 </View>
-                <FlatList
-                    data={actuaciones}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item._id.toString()}
-                />
-            </View>
 
-            {/* Botones de acción */}
-            <TouchableOpacity style={styles.buttonAction} onPress={añadirActuacionATodos}>
-                <Text style={styles.buttonText}>Añadir Actuación a todos los estudiantes</Text>
-            </TouchableOpacity>
+                {/* Botones de acción */}
+                <TouchableOpacity style={styles.buttonAction} onPress={añadirActuacionATodos}>
+                    <Text style={styles.buttonText}>Añadir Actuación a todos los estudiantes</Text>
+                </TouchableOpacity>
+            </>)}
             <TouchableOpacity style={styles.buttonAction} onPress={() => navigation.goBack()}>
-                <Text style={styles.buttonText}>Regresar</Text>
+                <Text style={styles.buttonText}>Regresar y Guardar</Text>
             </TouchableOpacity>
             <Modal visible={modalVisible} animationType='slide' transparent={true} onRequestClose={cerrarModal}>
                 <View style={styles.modalContainer}>
@@ -245,7 +284,7 @@ export default function DetalleActuaciones() {
                                 <Image source={require('../icons/microfono.png')} style={styles.icon}/>
                             </TouchableOpacity> */}
                             <TouchableOpacity style={styles.micButton}>
-                                <Image source={require('../icons/microfono.png')} style={styles.icon}/>
+                                <Image source={require('../icons/microfono.png')} style={styles.icon} />
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity style={styles.addButton} onPress={guardarDescripcion}>

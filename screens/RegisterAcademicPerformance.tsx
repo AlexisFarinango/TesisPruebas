@@ -1,6 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList, Modal } from "react-native";
+import { API_URL_BACKEND } from '@env';
+import { jwtDecode } from 'jwt-decode';
+import Toast from "react-native-toast-message";
+import axios from "axios";
 
 
 export default function RegistrarAsistencias() {
@@ -121,26 +126,69 @@ export default function RegistrarAsistencias() {
     });
     
 
-    const data = [
-        { id: 1, title: 'Química', screen:'Detalle Registro Actuacion'},
-        { id: 2, title: 'Matemáticas',screen:'Detalle Registro Actuacion'},
-        { id: 3, title: 'Física', screen:'Detalle Registro Actuacion'},
-    ];
+    // const data = [
+    //     { id: 1, title: 'Química', screen:'Detalle Registro Actuacion'},
+    //     { id: 2, title: 'Matemáticas',screen:'Detalle Registro Actuacion'},
+    //     { id: 3, title: 'Física', screen:'Detalle Registro Actuacion'},
+    // ];
+    const [cursos, setCursos] = useState([]);
     const navigation=useNavigation();
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate(item.screen, {materiaId: item.id})}>
-            <Text style={styles.cardText}>{item.title}</Text>
+        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate("Detalle Registro Actuacion", {materia: item.materia, paralelo: item.paralelo, semestre: item.semestre})}>
+            <Text style={styles.cardText}>{item.materia}</Text>
         </TouchableOpacity>
     );
-
+    const updateCursos = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        console.log("token obtenido en context docente",token);
+        const decode = jwtDecode(token);
+        const idDocente = decode.id 
+        console.log("ruta",`${API_URL_BACKEND}/curso/visualizar`);
+        
+        try {
+            const response = await axios.post(`${API_URL_BACKEND}/curso/visualizar`,{
+                docenteId: idDocente
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.status === 200) {
+                setCursos(response.data); // Actualizamos el estado de cursos
+                console.log("cursitos",response.data);
+                
+                Toast.show({
+                    type: "success",
+                    text1: "Cursos Encontrados",
+                });
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                Toast.show({
+                    type: "error",
+                    text1: "No se encontraron cursos",
+                });
+            } else {
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                });
+            }
+            console.log("Error al obtener los cursos:", error);
+        }
+    };
+    useEffect(() => {
+        updateCursos();
+    }, []);
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Actuaciones</Text>
+            <Toast />
             <FlatList
-                data={data}
+                data={cursos}
                 renderItem={renderItem}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={item => item.materia.toString()}
                 numColumns={2}
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={styles.grid}

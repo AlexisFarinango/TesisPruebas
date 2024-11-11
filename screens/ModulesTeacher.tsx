@@ -20,7 +20,7 @@ export default function ModulosDocentes() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Bienvenido Byron Loarte</Text>
+            <Text style={styles.title}>Bienvenido Docente</Text>
             <FlatList
                 data={data}
                 renderItem={renderItem}
