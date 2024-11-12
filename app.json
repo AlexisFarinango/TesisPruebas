@@ -1,4 +1,13 @@
+// {
+//   "name": "GestorAsistencias",
+//   "displayName": "GestorAsistencias"
+// }
 {
   "name": "GestorAsistencias",
-  "displayName": "GestorAsistencias"
+  "displayName": "GestorAsistencias",
+  "expo": {
+    "plugins": [
+      "@react-native-voice/voice"
+    ]
+  }
 }

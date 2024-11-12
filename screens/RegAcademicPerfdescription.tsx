@@ -1,10 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, Modal, TextInput } from 'react-native';
 import { API_URL_BACKEND } from '@env';
-//import Voice from 'react-native-voice';
+// import { Permissions } from "expo";
+import { PermissionsAndroid } from 'react-native';
+
+import Voice from '@react-native-voice/voice';
+
 
 export default function DetalleActuaciones() {
     const navigation = useNavigation();
@@ -15,6 +19,46 @@ export default function DetalleActuaciones() {
     const [modalVisible, setModalVisible] = useState(false);
     const [descripcion, setDescripcion] = useState('');
     const [currentEstudiante, setCurrentEstudiante] = useState(null);
+    const [escuchando,setEscuchando]= useState(false);
+
+    //Permisos para microfono
+    // const handleMicrophonePress = async () => {
+    //     // Solicitar permisos de micrófono
+    //     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+    //     if (status !== "granted") {
+    //         console.log("Permiso de micrófono no concedido");
+    //         return;
+    //     }
+    //     console.log("Permiso de micrófono concedido");
+    
+    //     // Iniciar o detener la grabación según el estado de `escuchando`
+    //     escuchando ? stopListening() : startListening();
+    // };
+    const handleMicrophonePress = async () => {
+        try {
+            // Solicitar permisos de micrófono en Android
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+                {
+                    title: "Permiso para grabar audio",
+                    message: "La aplicación necesita acceder al micrófono para grabar audio.",
+                    buttonNeutral: "Pregúntame después",
+                    buttonNegative: "Cancelar",
+                    buttonPositive: "Aceptar"
+                }
+            );
+    
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log("Permiso de micrófono concedido");
+                // Iniciar o detener la grabación según el estado de `escuchando`
+                escuchando ? stopListening() : startListening();
+            } else {
+                console.log("Permiso de micrófono no concedido");
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
 
     // Datos simulados
     const asistenciasSimuladas = [
@@ -121,19 +165,19 @@ export default function DetalleActuaciones() {
     }
 
     // Función para obtener estudiantes que estuvieron presentes en una asistencia simulada
-    const obtenerEstudiantesAsistentes = () => {
-        const estudiantesPresentesIds = asistenciasSimuladas
-            .filter(asistencia => asistencia.curso == materia && asistencia.estado_asistencias == 'presente')
-            .map(asistencia => asistencia.estudiante);
-        console.log('Estudiantes presentes IDs:', estudiantesPresentesIds); // Verifica el filtrado correcto
+    // const obtenerEstudiantesAsistentes = () => {
+    //     const estudiantesPresentesIds = asistenciasSimuladas
+    //         .filter(asistencia => asistencia.curso == materia && asistencia.estado_asistencias == 'presente')
+    //         .map(asistencia => asistencia.estudiante);
+    //     console.log('Estudiantes presentes IDs:', estudiantesPresentesIds); // Verifica el filtrado correcto
 
-        const actuacionesDeEstudiantes = actuacionesSimuladas.filter(actuacion =>
-            estudiantesPresentesIds.includes(actuacion._id)
-        );
-        console.log('Actuaciones de estudiantes:', actuacionesDeEstudiantes); // Verifica el resultado final
+    //     const actuacionesDeEstudiantes = actuacionesSimuladas.filter(actuacion =>
+    //         estudiantesPresentesIds.includes(actuacion._id)
+    //     );
+    //     console.log('Actuaciones de estudiantes:', actuacionesDeEstudiantes); // Verifica el resultado final
 
-        setActuaciones(actuacionesDeEstudiantes);
-    };
+    //     setActuaciones(actuacionesDeEstudiantes);
+    // };
 
 
 
@@ -143,6 +187,50 @@ export default function DetalleActuaciones() {
         console.log("Este es el id recibido de materia", materia);
 
     }, [materia]);
+
+    useEffect(()=>{
+        Voice.onSpeechStart = onSpeechStart;
+        Voice.onSpeechEnd = stopListening;
+        Voice.onSpeechResults = onSpeechResults;
+        Voice.onSpeechError = error => console.log('onSpeechError:',error);
+
+        return ()=>{
+            Voice.destroy ().then(Voice.removeAllListeners);
+        }
+
+    },[]);
+
+    const onSpeechStart = event => {
+        console.log("Empezando grabación...: ",event);
+        
+    }
+
+    // const onSpeechEnd = ()=>{};
+
+    const onSpeechResults = (event) => {
+        const text = event.value[0];
+        setDescripcion(text);
+    };
+
+    const startListening = async () => {
+        setEscuchando(true);
+        try {
+            await Voice.start('es-MX');
+            console.log("Grabación iniciada");
+        } catch (error) {
+            console.log("Error al empezar a grabar:", error);
+        }
+    };
+
+    const stopListening = async()=>{
+        try {
+            await Voice.stop();
+            Voice.removeAllListeners();
+            setEscuchando(false);
+        } catch (error) {
+            console.log("Error al detener la grabación a grabar: ",error);
+        }
+    }
 
     // Función para aumentar actuación de un estudiante
     const aumentarActuacion = (id) => {
@@ -208,10 +296,6 @@ export default function DetalleActuaciones() {
         cerrarModal();
     };
 
-    const onSpeechResults = (event) => {
-        const text = event.value[0];
-        setDescripcion(text);
-    };
 
     const renderItem = ({ item }) => (
         <View style={styles.tableRow}>
@@ -283,7 +367,7 @@ export default function DetalleActuaciones() {
                             {/* <TouchableOpacity onPress={iniciarDictado} style={styles.micButton}>
                                 <Image source={require('../icons/microfono.png')} style={styles.icon}/>
                             </TouchableOpacity> */}
-                            <TouchableOpacity style={styles.micButton}>
+                            <TouchableOpacity style={styles.micButton} onPress={handleMicrophonePress}>
                                 <Image source={require('../icons/microfono.png')} style={styles.icon} />
                             </TouchableOpacity>
                         </View>
