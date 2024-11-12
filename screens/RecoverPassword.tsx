@@ -5,26 +5,41 @@ import Toast from "react-native-toast-message";
 import axios from "axios";
 import { API_URL_BACKEND } from '@env'
 
+
 export default function RecuperarContra(){
     const [email,setEmail]= useState("");
     const navigation = useNavigation();
     const handleRecuperar=async()=>{
         if(!email){
-            alert("Porfavor ingresa el correo")
+            Toast.show({
+                type: "error",
+                text1: "Por favor ingresa el correo",
+            });
             return;
         }else{
-            const response = await axios.post(`${API_URL_BACKEND}/estudiante/recuperar-password`,{
-                email:email,
-            })
-            console.log("Email para recuperar constraseña",email);
-            Toast.show({
-                type: 'success',
-                text1: 'Contraseña recuperada',
-                text2: 'Porfavor, revisa tu correo'
-            })
-            setTimeout(()=>{
-                    navigation.navigate('Iniciar Sesion')
-            },5000);
+            try {
+                const response = await axios.post(`${API_URL_BACKEND}/estudiante/recuperar-password`,{
+                    email:email,
+                })
+                console.log("Email para recuperar constraseña",email);
+                
+                Toast.show({
+                    type: 'success',
+                    text1: `${response.data.msg}`,
+                    text2: 'Porfavor, revisa tu correo'
+                })
+                setTimeout(()=>{
+                        navigation.navigate('Iniciar Sesion')
+                },5000);
+            } catch (error) {
+                console.log("Se ha presentado el siguiente error",error);
+                Toast.show({
+                    type: 'error',
+                    text1: 'Correo electronico no encontrado',
+                    text2: 'Verifica el correo ingresado'
+                })
+                
+            }
         }
         
     }
@@ -73,6 +88,7 @@ export default function RecuperarContra(){
     });
     return(
         <View style={styles.container}>
+            <Toast/>
             <Text style={styles.title}>Recuperación de Contraseña</Text>
             <Text style={styles.label}>Ingresa tu correo Electronico</Text>
             <TextInput style={styles.input} placeholder="Correo institucional para recuperación" value={email} onChangeText={setEmail} keyboardType="email-address"/>
