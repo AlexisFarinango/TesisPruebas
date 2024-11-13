@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList, Modal } from "react-native";
 import { API_URL_BACKEND } from '@env';
+import Toast from "react-native-toast-message";
 
 
 export default function Asistencias() {
@@ -150,6 +151,11 @@ export default function Asistencias() {
             
         } catch (error) {
             console.log("No se pudo cargar los cursos",error);
+            Toast.show({
+                type: "error",
+                text1: "No se encontraron cursos",
+                text2:"Registrate en un Curso"
+            });
             
         }
     }
@@ -171,6 +177,7 @@ export default function Asistencias() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Actuaciones</Text>
+            <Toast/>
             <FlatList
                 data={cursos}
                 renderItem={renderItem}

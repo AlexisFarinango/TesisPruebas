@@ -186,6 +186,7 @@ export default function Asistencias() {
                 Toast.show({
                     type: "error",
                     text1: "No se encontraron cursos",
+                    text2:"Registrate en un Curso"
                 });
             } else {
                 Toast.show({
@@ -269,6 +270,7 @@ export default function Asistencias() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Asistencias</Text>
+            <Toast/>
             <FlatList
                 data={cursos}
                 renderItem={renderItem}

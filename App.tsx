@@ -67,7 +67,7 @@ const MainApp = () => {
         <Stack.Screen name="Recuperar Contraseña" component={RecuperarContra} />
         <Stack.Screen name="Docente" component={TeacherNavigation} options={{headerShown: false}}/>
         <Stack.Screen name="Estudiante" component={StudentNavigation} options={{headerShown: false}}/>
-        <Stack.Screen name="Token Validado" component={TokenValidado} />
+        <Stack.Screen name="Token Validado" component={TokenValidado} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -29,7 +29,7 @@ export default function RecuperarContra(){
                     text2: 'Porfavor, revisa tu correo'
                 })
                 setTimeout(()=>{
-                        navigation.navigate('Iniciar Sesion')
+                        navigation.navigate('Token Validado')
                 },5000);
             } catch (error) {
                 console.log("Se ha presentado el siguiente error",error);
