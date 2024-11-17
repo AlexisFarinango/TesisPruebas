@@ -96,7 +96,7 @@ export default function RegistroEstudiante() {
             fotografia: "",
           });
           Toast.show({ type: 'success', text1: 'Usuario Registrado', text2: 'Sus datos fueron ingresados con éxito' });
-          setTimeout(() => navigation.navigate('Iniciar Sesion'), 5000);
+          setTimeout(() => navigation.navigate('Token Registro'), 5000);
         }
       } catch (error) {
         console.log("Error al registrarse", error);
@@ -105,6 +105,8 @@ export default function RegistroEstudiante() {
           text1: 'Error',
           text2: 'Ocurrió un error, intente nuevamente',
         });
+        // borrar esto
+        // setTimeout(() => navigation.navigate('Token Registro'), 5000);
       }
     }
   };

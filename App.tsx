@@ -11,6 +11,8 @@ import TeacherNavigation from "./RoutesTeacher";
 import TokenValidado from "./screens/TokenValidate";
 import { AuthProvider } from './context/AuthContext'; // Ajusta la ruta según tu estructura
 import { Linking } from 'react-native';
+import TokenValidadoRegistro from "./screens/TokenValidateRegister";
+
 
 enableScreens();
 const Stack = createNativeStackNavigator();
@@ -68,6 +70,7 @@ const MainApp = () => {
         <Stack.Screen name="Docente" component={TeacherNavigation} options={{headerShown: false}}/>
         <Stack.Screen name="Estudiante" component={StudentNavigation} options={{headerShown: false}}/>
         <Stack.Screen name="Token Validado" component={TokenValidado} options={{headerShown: false}} />
+        <Stack.Screen name="Token Registro" component={TokenValidadoRegistro} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

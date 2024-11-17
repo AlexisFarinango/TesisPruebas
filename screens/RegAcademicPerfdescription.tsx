@@ -8,6 +8,7 @@ import { API_URL_BACKEND } from '@env';
 import { PermissionsAndroid } from 'react-native';
 
 import Voice from '@react-native-voice/voice';
+import Toast from 'react-native-toast-message';
 
 
 export default function DetalleActuaciones() {
@@ -21,19 +22,6 @@ export default function DetalleActuaciones() {
     const [currentEstudiante, setCurrentEstudiante] = useState(null);
     const [escuchando,setEscuchando]= useState(false);
 
-    //Permisos para microfono
-    // const handleMicrophonePress = async () => {
-    //     // Solicitar permisos de micrófono
-    //     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-    //     if (status !== "granted") {
-    //         console.log("Permiso de micrófono no concedido");
-    //         return;
-    //     }
-    //     console.log("Permiso de micrófono concedido");
-    
-    //     // Iniciar o detener la grabación según el estado de `escuchando`
-    //     escuchando ? stopListening() : startListening();
-    // };
     const handleMicrophonePress = async () => {
         try {
             // Solicitar permisos de micrófono en Android
@@ -60,83 +48,6 @@ export default function DetalleActuaciones() {
         }
     };
 
-    // Datos simulados
-    const asistenciasSimuladas = [
-        {
-            curso: '1',
-            estudiante: '1',
-            estado_asistencias: 'presente',
-        },
-        {
-            curso: '1',
-            estudiante: '2',
-            estado_asistencias: 'ausente',
-        },
-        {
-            curso: '1',
-            estudiante: '3',
-            estado_asistencias: 'presente',
-        },
-        {
-            curso: '1',
-            estudiante: '4',
-            estado_asistencias: 'presente',
-        },
-        {
-            curso: '2',
-            estudiante: '1',
-            estado_asistencias: 'ausente',
-        },
-        {
-            curso: '2',
-            estudiante: '2',
-            estado_asistencias: 'ausente',
-        },
-        {
-            curso: '2',
-            estudiante: '3',
-            estado_asistencias: 'presente',
-        },
-        {
-            curso: '2',
-            estudiante: '4',
-            estado_asistencias: 'presente',
-        },
-        {
-            curso: '3',
-            estudiante: '1',
-            estado_asistencias: 'presente',
-        },
-        {
-            curso: '3',
-            estudiante: '2',
-            estado_asistencias: 'presente',
-        },
-        {
-            curso: '3',
-            estudiante: '3',
-            estado_asistencias: 'presente',
-        },
-        {
-            curso: '3',
-            estudiante: '4',
-            estado_asistencias: 'presente',
-        },
-    ];
-
-    const estudiantesSimulados = [
-        { _id: '1', nombre: 'Juan Pérez', },
-        { _id: '2', nombre: 'María López', },
-        { _id: '3', nombre: 'Carlos Sánchez', },
-        { _id: '4', nombre: 'Jorge Perez', }
-    ];
-
-    const actuacionesSimuladas = [
-        { _id: '1', nombre: 'Juan Pérez', actuacion: 0, descripcion: '' },
-        { _id: '2', nombre: 'María López', actuacion: 0, descripcion: '' },
-        { _id: '3', nombre: 'Carlos Sánchez', actuacion: 0, descripcion: '' },
-        { _id: '4', nombre: 'Jorge Perez', actuacion: 0, descripcion: '' },
-    ];
 
     const updateAsistentes = async (materia, paralelo, semestre) => {
         try {
@@ -153,9 +64,10 @@ export default function DetalleActuaciones() {
             // Agregar la propiedad 'cantiactuacionesactuales' inicializada en 0
             const dataConCantActuaciones = response.data.map((item) => ({
                 ...item,
-                cantiactuacionesactuales: 0
+                cantiactuacionesactuales: 0,
+                descripciones:[],
             }));
-            console.log("Datos Actuaciones completo: ", dataConCantActuaciones);
+            console.log("Datos Asistentes completo: ", dataConCantActuaciones);
 
             setActuaciones(dataConCantActuaciones);
         } catch (error) {
@@ -163,25 +75,6 @@ export default function DetalleActuaciones() {
 
         }
     }
-
-    // Función para obtener estudiantes que estuvieron presentes en una asistencia simulada
-    // const obtenerEstudiantesAsistentes = () => {
-    //     const estudiantesPresentesIds = asistenciasSimuladas
-    //         .filter(asistencia => asistencia.curso == materia && asistencia.estado_asistencias == 'presente')
-    //         .map(asistencia => asistencia.estudiante);
-    //     console.log('Estudiantes presentes IDs:', estudiantesPresentesIds); // Verifica el filtrado correcto
-
-    //     const actuacionesDeEstudiantes = actuacionesSimuladas.filter(actuacion =>
-    //         estudiantesPresentesIds.includes(actuacion._id)
-    //     );
-    //     console.log('Actuaciones de estudiantes:', actuacionesDeEstudiantes); // Verifica el resultado final
-
-    //     setActuaciones(actuacionesDeEstudiantes);
-    // };
-
-
-
-    // Se ejecuta al montar el componente
     useEffect(() => {
         updateAsistentes(materia, paralelo, semestre);
         console.log("Este es el id recibido de materia", materia);
@@ -197,18 +90,22 @@ export default function DetalleActuaciones() {
         return ()=>{
             Voice.destroy ().then(Voice.removeAllListeners);
         }
+    },[actuaciones]);
 
-    },[]);
+    useEffect(() => {
+        console.log("Actuaciones actualizadas:", actuaciones);
+      }, [actuaciones]);
+      
 
     const onSpeechStart = event => {
         console.log("Empezando grabación...: ",event);
         
     }
 
-    // const onSpeechEnd = ()=>{};
-
     const onSpeechResults = (event) => {
         const text = event.value[0];
+        console.log("Grabacion",text);
+        
         setDescripcion(text);
     };
 
@@ -262,39 +159,54 @@ export default function DetalleActuaciones() {
             )
         );
     };
-    // Funciones para el manejo del dictado por voz
-    // useEffect(() => {
-    //     Voice.onSpeechResults = onSpeechResults;
-    //     return () => {
-    //         Voice.destroy().then(Voice.removeAllListeners);
-    //     };
-    // }, []);
-    // const iniciarDictado = async () => {
-    //     try {
-    //         await Voice.start('es-ES');
-    //     } catch (e) {
-    //         console.error(e);
-    //     }
-    // };
-    //Funciones manejo Modal para dictado por voz
+    
     const abrirModal = (estudiante) => {
+        if(estudiante.descripciones.length>=5){
+            alert("Este estudiante ya tiene 5 descripciones.");
+            return;
+        };
+        console.log("dato del modal estudiante: ",estudiante.descripciones);
         setCurrentEstudiante(estudiante);
-        setDescripcion(estudiante.descripcion || '');
         setModalVisible(true);
     };
-
+    
     const cerrarModal = () => {
         setModalVisible(false);
     };
-
+    
     const guardarDescripcion = () => {
-        setActuaciones(prevActuaciones =>
-            prevActuaciones.map(item =>
-                item._id === currentEstudiante._id ? { ...item, descripcion: descripcion } : item
-            )
-        );
-        cerrarModal();
+        if(!descripcion.trim()){
+            alert("La descripción no puede estar vacia")
+        }else{
+
+            console.log("Actuaciones a actualizar:",actuaciones);
+            console.log("texto proximo a ser guardado: ",descripcion);
+            console.log("id de estudiante actualizar: ",currentEstudiante.estudiante._id);
+            console.log("mapeo1",actuaciones.map(item =>
+                item.estudiante._id));
+            
+            console.log("Comparacion mapeo",actuaciones.map(item =>
+                item.estudiante._id===currentEstudiante.estudiante._id));
+            console.log("datos:",actuaciones.map(item =>item.descripciones.length));
+            
+    
+            setActuaciones(prevActuaciones =>
+                prevActuaciones.map(item =>
+                    item.estudiante._id === currentEstudiante.estudiante._id 
+                    ? { 
+                        ...item, 
+                        descripciones: item.descripciones.length < 5 
+                            ? [...item.descripciones, descripcion] 
+                            : item.descripciones,
+                      } 
+                    : item
+                )
+            );
+            cerrarModal();
+            setDescripcion('');
+        }
     };
+    
 
 
     const renderItem = ({ item }) => (
@@ -331,6 +243,7 @@ export default function DetalleActuaciones() {
 
     return (
         <View style={styles.container}>
+            <Toast/>
             <Text style={styles.title}>Detalle Actuaciones</Text>
             {actuaciones.length === 0 ? (
                 <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
@@ -373,6 +286,9 @@ export default function DetalleActuaciones() {
                         </View>
                         <TouchableOpacity style={styles.addButton} onPress={guardarDescripcion}>
                             <Text style={styles.addButtonText}>Añadir</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.retocederfondo} onPress={cerrarModal}>
+                            <Text style={styles.addButtonText}>Regresar sin añadir</Text>
                         </TouchableOpacity>
 
                     </View>
@@ -519,5 +435,13 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    retocederfondo:{
+        marginTop: 20,
+        backgroundColor: '#e52510',
+        padding: 15,
+        borderRadius: 10,
+        width: '50%',
+        alignItems: 'center',
     },
 });
