@@ -20,7 +20,10 @@ export default function DetalleActuaciones() {
     const [modalVisible, setModalVisible] = useState(false);
     const [descripcion, setDescripcion] = useState('');
     const [currentEstudiante, setCurrentEstudiante] = useState(null);
-    const [escuchando,setEscuchando]= useState(false);
+    const [escuchando, setEscuchando] = useState(false);
+    const [idsActuaciones, setIdsActuaciones] = useState([]);
+    const [idsEstudiantesupdate, setIdsestudiantesUpdate] = useState([]);
+    const [actuacionesParaActualizar, setActuacionesparaActualizar] = useState([]);
 
     const handleMicrophonePress = async () => {
         try {
@@ -35,7 +38,7 @@ export default function DetalleActuaciones() {
                     buttonPositive: "Aceptar"
                 }
             );
-    
+
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 console.log("Permiso de micrófono concedido");
                 // Iniciar o detener la grabación según el estado de `escuchando`
@@ -65,7 +68,7 @@ export default function DetalleActuaciones() {
             const dataConCantActuaciones = response.data.map((item) => ({
                 ...item,
                 cantiactuacionesactuales: 0,
-                descripciones:[],
+                descripciones: [],
             }));
             console.log("Datos Asistentes completo: ", dataConCantActuaciones);
 
@@ -81,31 +84,32 @@ export default function DetalleActuaciones() {
 
     }, [materia]);
 
-    useEffect(()=>{
+    useEffect(() => {
         Voice.onSpeechStart = onSpeechStart;
         Voice.onSpeechEnd = stopListening;
         Voice.onSpeechResults = onSpeechResults;
-        Voice.onSpeechError = error => console.log('onSpeechError:',error);
+        Voice.onSpeechError = error => console.log('onSpeechError:', error);
 
-        return ()=>{
-            Voice.destroy ().then(Voice.removeAllListeners);
+        return () => {
+            Voice.destroy().then(Voice.removeAllListeners);
         }
-    },[actuaciones]);
+    }, [actuaciones]);
 
     useEffect(() => {
         console.log("Actuaciones actualizadas:", actuaciones);
-      }, [actuaciones]);
-      
+        obtenerIDparaActualizar();
+    }, [actuaciones]);
+
 
     const onSpeechStart = event => {
-        console.log("Empezando grabación...: ",event);
-        
+        console.log("Empezando grabación...: ", event);
+
     }
 
     const onSpeechResults = (event) => {
         const text = event.value[0];
-        console.log("Grabacion",text);
-        
+        console.log("Grabacion", text);
+
         setDescripcion(text);
     };
 
@@ -119,13 +123,13 @@ export default function DetalleActuaciones() {
         }
     };
 
-    const stopListening = async()=>{
+    const stopListening = async () => {
         try {
             await Voice.stop();
             Voice.removeAllListeners();
             setEscuchando(false);
         } catch (error) {
-            console.log("Error al detener la grabación a grabar: ",error);
+            console.log("Error al detener la grabación a grabar: ", error);
         }
     }
 
@@ -159,54 +163,128 @@ export default function DetalleActuaciones() {
             )
         );
     };
-    
+
     const abrirModal = (estudiante) => {
-        if(estudiante.descripciones.length>=5){
+        if (estudiante.descripciones.length >= 5) {
             alert("Este estudiante ya tiene 5 descripciones.");
             return;
         };
-        console.log("dato del modal estudiante: ",estudiante.descripciones);
+        console.log("dato del modal estudiante: ", estudiante.descripciones);
         setCurrentEstudiante(estudiante);
         setModalVisible(true);
     };
-    
+
     const cerrarModal = () => {
         setModalVisible(false);
     };
-    
-    const guardarDescripcion = () => {
-        if(!descripcion.trim()){
-            alert("La descripción no puede estar vacia")
-        }else{
 
-            console.log("Actuaciones a actualizar:",actuaciones);
-            console.log("texto proximo a ser guardado: ",descripcion);
-            console.log("id de estudiante actualizar: ",currentEstudiante.estudiante._id);
-            console.log("mapeo1",actuaciones.map(item =>
+    const guardarDescripcion = () => {
+        if (!descripcion.trim()) {
+            alert("La descripción no puede estar vacia")
+        } else {
+
+            console.log("Actuaciones a actualizar:", actuaciones);
+            console.log("texto proximo a ser guardado: ", descripcion);
+            console.log("id de estudiante actualizar: ", currentEstudiante.estudiante._id);
+            console.log("mapeo1", actuaciones.map(item =>
                 item.estudiante._id));
-            
-            console.log("Comparacion mapeo",actuaciones.map(item =>
-                item.estudiante._id===currentEstudiante.estudiante._id));
-            console.log("datos:",actuaciones.map(item =>item.descripciones.length));
-            
-    
+
+            console.log("Comparacion mapeo", actuaciones.map(item =>
+                item.estudiante._id === currentEstudiante.estudiante._id));
+            console.log("datos:", actuaciones.map(item => item.descripciones.length));
+
+
             setActuaciones(prevActuaciones =>
                 prevActuaciones.map(item =>
-                    item.estudiante._id === currentEstudiante.estudiante._id 
-                    ? { 
-                        ...item, 
-                        descripciones: item.descripciones.length < 5 
-                            ? [...item.descripciones, descripcion] 
-                            : item.descripciones,
-                      } 
-                    : item
+                    item.estudiante._id === currentEstudiante.estudiante._id
+                        ? {
+                            ...item,
+                            descripciones: item.descripciones.length < 5
+                                ? [...item.descripciones, descripcion]
+                                : item.descripciones,
+                        }
+                        : item
                 )
             );
             cerrarModal();
             setDescripcion('');
         }
     };
-    
+
+    const GuardaryRegresar = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        console.log("actu en guardar", actuacionesParaActualizar);
+
+        const actuaciones = actuacionesParaActualizar;
+        const datosEnvio = {
+            materia: materia,
+            paralelo: paralelo,
+            semestre: semestre,
+            fecha: "22/10/2024",
+            actuaciones
+        };
+        console.log("datos del body: ", datosEnvio);
+        console.log("Cuerpo enviado al backend:", JSON.stringify(datosEnvio, null, 2));
+
+
+        try {
+            const secondresponse = await axios.put(`${API_URL_BACKEND}/actuacion/actualizar`, datosEnvio, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log(secondresponse.data);
+            Toast.show({
+                type: "success",
+                text1: secondresponse.data.msg
+            })
+        } catch (error) {
+            console.log("Error al realizar la actualización en base", error);
+            Toast.show({
+                type: "success",
+                text1: "Error al realizar la actualización en base"
+            })
+
+        }
+    };
+
+    const obtenerIDparaActualizar = async () => {
+        const token = await AsyncStorage.getItem('userToken');
+        try {
+            const response = await axios.post(`${API_URL_BACKEND}/actuacion/visualizar`, {
+                materia: materia,
+                paralelo: paralelo,
+                semestre: semestre
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log("obtener id para actualizar", response.data);
+            setIdsActuaciones(response.data.map(item => item._id));
+            setIdsestudiantesUpdate(response.data.map(item => item.estudiante));
+            console.log("Ids de todas las actuaciones de todos los estudiantes del curso: ", idsActuaciones);
+            console.log("Ids de todaos los estudiantes del curso: ", idsEstudiantesupdate);
+            // console.log(actuaciones);
+            // console.log(actuaciones.estudiante._id);
+            console.log(actuaciones.map(item => item.estudiante._id));
+
+            //Comparando los IDs de actuaciones con los estudiantes a actualizar
+            const actuacionesconsul = actuaciones.filter(item => idsEstudiantesupdate.includes(item.estudiante._id.toString())).map(item => ({
+                id: idsActuaciones[idsEstudiantesupdate.indexOf(item.estudiante._id.toString())],
+                cantidad_actuaciones: item.cantiactuacionesactuales || "0",
+                descripciones: item.descripciones || []
+            }));
+            setActuacionesparaActualizar(actuacionesconsul)
+
+            console.log("obtener id de actuaciones segun est presentes:", actuacionesParaActualizar);
+
+        } catch (error) {
+            console.log("Error al obtener IDs de actuaciones para actualizacion", error);
+
+        }
+    };
+
 
 
     const renderItem = ({ item }) => (
@@ -243,7 +321,7 @@ export default function DetalleActuaciones() {
 
     return (
         <View style={styles.container}>
-            <Toast/>
+            <Toast />
             <Text style={styles.title}>Detalle Actuaciones</Text>
             {actuaciones.length === 0 ? (
                 <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
@@ -266,7 +344,7 @@ export default function DetalleActuaciones() {
                     <Text style={styles.buttonText}>Añadir Actuación a todos los estudiantes</Text>
                 </TouchableOpacity>
             </>)}
-            <TouchableOpacity style={styles.buttonAction} onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={styles.buttonAction} onPress={async () => { await GuardaryRegresar(); navigation.goBack(); }}>
                 <Text style={styles.buttonText}>Regresar y Guardar</Text>
             </TouchableOpacity>
             <Modal visible={modalVisible} animationType='slide' transparent={true} onRequestClose={cerrarModal}>
@@ -436,7 +514,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-    retocederfondo:{
+    retocederfondo: {
         marginTop: 20,
         backgroundColor: '#e52510',
         padding: 15,
