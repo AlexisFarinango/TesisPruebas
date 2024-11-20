@@ -41,7 +41,7 @@ export default function Asistencias() {
             color: "#fff", // Letras blancas
             fontWeight: "bold",
             fontSize: 14,
-            width: 95,  // Ancho de cada columna (ajustable según necesidad)
+            width: 125,  // Ancho de cada columna (ajustable según necesidad)
             textAlign: "center",
         },
         tableRow: {
@@ -146,8 +146,8 @@ export default function Asistencias() {
             fontWeight: 'bold',
         },
         scrollView: {
-            maxHeight: 200,
-            width: '100%',
+            maxHeight: 100,
+            width: '60%',
         },
         noDataText: {
             fontSize: 16,
@@ -294,7 +294,6 @@ export default function Asistencias() {
                             <>
                                 <View style={styles.tableHeader}>
                                     <Text style={styles.headertableText}>Fecha</Text>
-                                    <Text style={styles.headertableText}>Horario</Text>
                                     <Text style={styles.headertableText}>Asistencias</Text>
                                 </View>
                                 <ScrollView style={styles.scrollView}>
