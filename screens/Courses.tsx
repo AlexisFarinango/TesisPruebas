@@ -81,30 +81,32 @@ export default function Materias() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Cursos Asignados</Text>
+            <View style={styles.container2}>
+                <Text style={styles.title}>Cursos Asignados</Text>
 
-            <Toast />
-            <TextInput
-                style={styles.input}
-                placeholder="Ingresa el Código del Curso"
-                value={cursoCodigo}
-                onChangeText={setCursoCodigo}
-            />
+                <Toast />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Ingresa el Código del Curso"
+                    value={cursoCodigo}
+                    onChangeText={setCursoCodigo}
+                />
 
-            <TouchableOpacity style={styles.addButton} onPress={agregarCurso}>
-                <Text style={styles.addButtonText}>Añadir Curso</Text>
-            </TouchableOpacity>
+                <TouchableOpacity style={styles.addButton} onPress={agregarCurso}>
+                    <Text style={styles.addButtonText}>Añadir Curso</Text>
+                </TouchableOpacity>
 
-            <ScrollView style={styles.cursosContainer}>
-                {cursos.map((curso, index) => (
-                    <View key={index} style={styles.cursoCard}>
-                        <Text style={styles.cursoNombre}>{curso.materia}</Text>
-                        <Text style={styles.cursoInfo}>Docente: {curso.docente.nombre} {curso.docente.apellido}</Text>
-                        <Text style={styles.cursoInfo}>Paralelo: {curso.paralelo}</Text>
-                        <Text style={styles.cursoInfo}>Horario: {curso.horario} {curso.docente.horario}</Text>
-                    </View>
-                ))}
-            </ScrollView>
+                <ScrollView style={styles.cursosContainer}>
+                    {cursos.map((curso, index) => (
+                        <View key={index} style={styles.cursoCard}>
+                            <Text style={styles.cursoNombre}>{curso.materia}</Text>
+                            <Text style={styles.cursoInfo}>Docente: {curso.docente.nombre} {curso.docente.apellido}</Text>
+                            <Text style={styles.cursoInfo}>Paralelo: {curso.paralelo}</Text>
+                            <Text style={styles.cursoInfo}>Horario: {curso.horario} {curso.docente.horario}</Text>
+                        </View>
+                    ))}
+                </ScrollView>
+            </View>
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Modulos')}>
                     <Image source={require('../icons/inicio.png')} style={styles.barNavicon} />
@@ -133,6 +135,10 @@ export default function Materias() {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        backgroundColor: "#f4f4f4",
+    },
+    container2: {
         flex: 1,
         backgroundColor: '#F4F6F9',
         paddingHorizontal: 20,
