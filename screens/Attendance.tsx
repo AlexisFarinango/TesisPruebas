@@ -147,7 +147,7 @@ export default function Asistencias() {
         },
         scrollView: {
             maxHeight: 100,
-            width: '60%',
+            width: '100%',
         },
         noDataText: {
             fontSize: 16,
@@ -287,7 +287,8 @@ export default function Asistencias() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.title}>{selectedMateria} - Asistencias</Text>
+                        <Text style={styles.title}>Reporte Asistencias</Text>
+                        <Text >Este modulo te permite visualizar las asistencias del estudiante en la materia ...</Text>
                         {asistencias.length === 0 ? (
                             <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
                         ) : (

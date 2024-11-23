@@ -53,6 +53,17 @@ export default function DetalleActuaciones() {
 
 
     const updateAsistentes = async (materia, paralelo, semestre) => {
+
+        const obtenerFechaActual = () => {
+            const ahora = new Date();
+            const anio = ahora.getFullYear();
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+            const dia = String(ahora.getDate()).padStart(2, '0');
+            return `${dia}/${mes}/${anio}`;
+        };
+        const fechaActual = obtenerFechaActual();
+        console.log("Fecha actual:", fechaActual);
+
         try {
             const token = await AsyncStorage.getItem("userToken")
             const response = await axios.post(`${API_URL_BACKEND}/actuacion/listar-estudiantes`, {
@@ -70,9 +81,22 @@ export default function DetalleActuaciones() {
                 cantiactuacionesactuales: 0,
                 descripciones: [],
             }));
-            console.log("Datos Asistentes completo: ", dataConCantActuaciones);
+            console.log("Datos Asistentes completo: ", dataConCantActuaciones.map((item) => item.fecha));
+            console.log("Datos Asistentes completo: ", dataConCantActuaciones.fecha);
 
-            setActuaciones(dataConCantActuaciones);
+            // Filtrar los datos que coinciden con la fecha actual
+            const datosConFechaActual = dataConCantActuaciones.filter(data =>
+                data.fecha.includes(fechaActual)
+            );
+            console.log("comparacion: ", datosConFechaActual);
+
+
+            if (datosConFechaActual.length > 0) {
+                // Si hay coincidencias, actualizamos 'actuaciones'
+                setActuaciones(datosConFechaActual);
+            } else {
+                console.log("No se encontraron datos con la fecha actual, no se actualizarán actuaciones.");
+            }
         } catch (error) {
             console.log("Error al obtener estudiantes presentes", error);
 
@@ -213,6 +237,17 @@ export default function DetalleActuaciones() {
 
     const GuardaryRegresar = async () => {
         const token = await AsyncStorage.getItem('userToken');
+        const obtenerFechaActual = () => {
+            const ahora = new Date();
+            const anio = ahora.getFullYear();
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+            const dia = String(ahora.getDate()).padStart(2, '0');
+            return `${dia}/${mes}/${anio}`;
+        };
+
+        const fechaActual = obtenerFechaActual();
+        console.log("Fecha formateada:", fechaActual);
+
         console.log("actu en guardar", actuacionesParaActualizar);
 
         const actuaciones = actuacionesParaActualizar;
@@ -220,7 +255,7 @@ export default function DetalleActuaciones() {
             materia: materia,
             paralelo: paralelo,
             semestre: semestre,
-            fecha: "22/10/2024",
+            fecha: fechaActual,
             actuaciones
         };
         console.log("datos del body: ", datosEnvio);
@@ -324,7 +359,7 @@ export default function DetalleActuaciones() {
             <Toast />
             <Text style={styles.title}>Detalle Actuaciones</Text>
             {actuaciones.length === 0 ? (
-                <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
+                <Text style={styles.noDataText}>No existen Registros Actuales</Text>
             ) : (<>
                 <View style={styles.table}>
                     <View style={[styles.tableRow, styles.tableHeaderRow]}>
@@ -344,9 +379,20 @@ export default function DetalleActuaciones() {
                     <Text style={styles.buttonText}>Añadir Actuación a todos los estudiantes</Text>
                 </TouchableOpacity>
             </>)}
-            <TouchableOpacity style={styles.buttonAction} onPress={async () => { await GuardaryRegresar(); navigation.goBack(); }}>
-                <Text style={styles.buttonText}>Regresar y Guardar</Text>
-            </TouchableOpacity>
+            {actuaciones.length === 0 ? (
+                <TouchableOpacity style={styles.buttonAction} onPress={async () => { navigation.goBack(); }}>
+                    <Text style={styles.buttonText}>Regresar</Text>
+                </TouchableOpacity>
+            ) : (<>
+                <TouchableOpacity style={styles.buttonAction} onPress={async () => { await GuardaryRegresar(); navigation.goBack(); }}>
+                    <Text style={styles.buttonText}>Regresar y Guardar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonAction} onPress={async () => { navigation.goBack(); }}>
+                    <Text style={styles.buttonText}>Regresar</Text>
+                </TouchableOpacity>
+            </>
+            )}
+
             <Modal visible={modalVisible} animationType='slide' transparent={true} onRequestClose={cerrarModal}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>

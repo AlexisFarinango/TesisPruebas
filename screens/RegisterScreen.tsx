@@ -135,7 +135,7 @@ export default function RegistroEstudiante() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-          <Text style={styles.title}>Pantalla de Registro Estudiante</Text>
+          <Text style={styles.title}>Nuevo Estudiante</Text>
           <TextInput style={styles.input} placeholder="Nombres Completos" value={form.nombre} onChangeText={(value) => handleChange('nombre', value)} />
           <TextInput style={styles.input} placeholder="Apellidos Completos" value={form.apellido} onChangeText={(value) => handleChange('apellido', value)} />
           <TextInput style={styles.input} placeholder="Cédula" keyboardType="numeric" value={form.cedula} onChangeText={(value) => handleChange('cedula', value)} />

@@ -129,7 +129,7 @@ export default function DetallesActuaciones() {
                         <Text style={styles.modalTitle}>Descripciones</Text>
                         <View style={styles.table}>
                             <View style={[styles.tableRow, styles.tableHeaderRow]}>
-                                <Text style={styles.tableHeader}>Descripciones</Text>
+                                <Text style={styles.tableHeader}>Detalles</Text>
                             </View>
                             {selectedDescriptions.length > 0 ? (
                                 Array.isArray(selectedDescriptions) ? (

@@ -133,11 +133,6 @@ export default function RegistrarAsistencias() {
     // ];
     const [cursos, setCursos] = useState([]);
     const navigation=useNavigation();
-    const renderItem = ({ item }) => (
-        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate("Detalle Registro Actuacion", {materia: item.materia, paralelo: item.paralelo, semestre: item.semestre})}>
-            <Text style={styles.cardText}>{item.materia}</Text>
-        </TouchableOpacity>
-    );
     const updateCursos = async () => {
         const token = await AsyncStorage.getItem('userToken');
         console.log("token obtenido en context docente",token);
@@ -177,8 +172,111 @@ export default function RegistrarAsistencias() {
             console.log("Error al obtener los cursos:", error);
         }
     };
+    // const renderItem = ({ item }) => (
+    //     <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate("Detalle Registro Actuacion", {materia: item.materia, paralelo: item.paralelo, semestre: item.semestre})}>
+    //         <Text style={styles.cardText}>{item.materia}</Text>
+    //     </TouchableOpacity>
+    // );
+    // const validarFecharegistroActuaciones = async()=> {
+    //     const token = await AsyncStorage.getItem('userToken');
+    //     const obtenerFechaActual = () => {
+    //         const ahora = new Date();
+    //         const anio = ahora.getFullYear();
+    //         const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+    //         const dia = String(ahora.getDate()).padStart(2, '0');
+    //         return `${dia}/${mes}/${anio}`;
+    //     };
+        
+    //     const fechaActual = obtenerFechaActual();
+    //     console.log("Fecha formateada:", fechaActual);
+        
+    //     try {
+    //         const response = await axios.post(`${API_URL_BACKEND}/actuacion/visualizar`,{
+    //             materia: "Programación",
+    //             paralelo: "GR1",
+    //             semestre: "2024-B"
+    //         },{
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`
+    //             }
+    //         });
+            
+
+    //         console.log("respuesta validar Fecha:",response.data);
+    //         console.log("respuesta validar Fecha:",response.data.map((item)=>(item.fecha_actuaciones)));
+            
+    //     } catch (error) {
+    //         console.log("Error al obtener fecha",error);
+            
+    //     }
+    // }
+    const renderItem = ({ item }) => (
+        <TouchableOpacity 
+            style={[styles.card, item.highlight && styles.highlight]} 
+            onPress={() => verificarFechaRegistro(item)}
+        >
+            <Text style={styles.cardText}>{item.materia}</Text>
+        </TouchableOpacity>
+    );
+    
+    const verificarFechaRegistro = async (item) => {
+        const token = await AsyncStorage.getItem('userToken');
+        console.log("datos item: ",item);
+        
+        
+        const obtenerFechaActual = () => {
+            const ahora = new Date();
+            const anio = ahora.getFullYear();
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+            const dia = String(ahora.getDate()).padStart(2, '0');
+            return `${dia}/${mes}/${anio}`;
+        };
+        
+        const fechaActual = obtenerFechaActual();
+        console.log("Fecha actual:", fechaActual);
+        
+        try {
+            // Realiza la consulta para obtener las actuaciones
+            const response = await axios.post(`${API_URL_BACKEND}/actuacion/visualizar`, {
+                materia: item.materia,
+                paralelo: item.paralelo,
+                semestre: item.semestre
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            const actuaciones = response.data; // Obtén los datos de la respuesta
+            console.log("Actuaciones obtenidas:", actuaciones);
+    
+            // Busca si la fecha actual existe en alguna de las `fecha_actuaciones`
+            const fechaEncontrada = actuaciones.some(actuacion => 
+                actuacion.fecha_actuaciones.includes(fechaActual)
+            );
+    
+            if (fechaEncontrada) {
+                // Muestra una notificación si la fecha actual ya está registrada
+                Toast.show({
+                    type:"error",
+                    text1: "Las actuaciones con la fecha actual ya fueron registradas"
+                });
+            } else {
+                // Navega al módulo si la fecha actual no está registrada
+                navigation.navigate("Detalle Registro Actuacion", {
+                    materia: item.materia,
+                    paralelo: item.paralelo,
+                    semestre: item.semestre
+                });
+            }
+        } catch (error) {
+            console.log("Error al verificar fecha de registro:", error);
+            ToastAndroid.show("Error al verificar actuaciones", ToastAndroid.LONG);
+        }
+    };
     useEffect(() => {
         updateCursos();
+        // verificarFechaRegistro();
     }, []);
 
     return (

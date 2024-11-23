@@ -85,16 +85,16 @@ export default function Materias() {
                 <Text style={styles.title}>Cursos Asignados</Text>
 
                 <Toast />
+
+                <TouchableOpacity style={styles.addButton} onPress={agregarCurso}>
+                    <Text style={styles.addButtonText}>Registrarse en Curso</Text>
+                </TouchableOpacity>
                 <TextInput
                     style={styles.input}
                     placeholder="Ingresa el Código del Curso"
                     value={cursoCodigo}
                     onChangeText={setCursoCodigo}
                 />
-
-                <TouchableOpacity style={styles.addButton} onPress={agregarCurso}>
-                    <Text style={styles.addButtonText}>Añadir Curso</Text>
-                </TouchableOpacity>
 
                 <ScrollView style={styles.cursosContainer}>
                     {cursos.map((curso, index) => (

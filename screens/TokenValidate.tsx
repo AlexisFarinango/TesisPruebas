@@ -97,7 +97,7 @@ export default function TokenValidado() {
     return (
         <View style={styles.container}>
             <Toast />
-            <Text style={styles.title}>Ingresa el código en el teléfono</Text>
+            <Text style={styles.title}>Ingresar Código</Text>
             <View style={styles.codeContainer}>
                 {Array.from({ length: 6 }).map((_, index) => (
                     <TextInput
@@ -112,7 +112,7 @@ export default function TokenValidado() {
                 ))}
             </View>
             <TouchableOpacity style={styles.button} onPress={handleSendToken}>
-                <Text style={styles.buttonText}>Enviar token de confirmación</Text>
+                <Text style={styles.buttonText}>Enviar</Text>
             </TouchableOpacity>
 
             {/* Modal para ingresar nueva contraseña */}

@@ -9,9 +9,9 @@ import { AuthContext } from '../context/AuthContext';
 
 const data = [
     { id: 1, title: 'Perfil', icon: require('../icons/perfil.png'), screen: 'Perfil' },
-    { id: 2, title: 'Ver Cursos', icon: require('../icons/cursos.png'), screen: 'Ver Cursos' },
-    { id: 3, title: 'Ver Asistencias', icon: require('../icons/asistencias.png'), screen: 'Ver Asistencias' },
-    { id: 4, title: 'Ver Actuaciones', icon: require('../icons/actuaciones.png'), screen: 'Ver Actuaciones' },
+    { id: 2, title: 'Cursos', icon: require('../icons/cursos.png'), screen: 'Ver Cursos' },
+    { id: 3, title: 'Asistencias', icon: require('../icons/asistencias.png'), screen: 'Ver Asistencias' },
+    { id: 4, title: 'Actuaciones', icon: require('../icons/actuaciones.png'), screen: 'Ver Actuaciones' },
 
 ];
 
