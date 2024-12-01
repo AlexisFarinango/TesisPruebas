@@ -241,7 +241,7 @@ export default function RegistroEstudiante() {
                                 <TextInput
                                     style={styles.input}
                                     onChangeText={text => {
-                                        if (text.length <= 30) {
+                                        if (text.length <= 50) {
                                             handleChange('email')(text)
                                         }
                                     }}

@@ -37,17 +37,35 @@ export default function PerfilEstudiante() {
     const handleUpdate = async (values) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
-            console.log("valores",values);
+            console.log("valores", values);
             
-            console.log("Este es el formulario:", JSON.stringify(values, null, 2));
+            // Crear un FormData para enviar la fotografía correctamente
+            const formData = new FormData();
+            formData.append('nombre', values.nombre);
+            formData.append('apellido', values.apellido);
+            formData.append('direccion', values.direccion);
+            formData.append('ciudad', values.ciudad);
+            formData.append('telefono', values.telefono);
             
-            await axios.put(`${API_URL_BACKEND}/estudiante/modificar-perfil/${userData._id}`, values, {
+            // Verificar si hay una nueva fotografía y agregarla al FormData
+            if (values.fotografia) {
+                formData.append('fotografia', {
+                    uri: values.fotografia,
+                    type: 'image/jpeg', // Cambia esto si es necesario
+                    name: values.fotografia.split('/').pop() || `photo_${Date.now()}.jpg`,
+                });
+            }
+
+            console.log("Este es el formulario:", JSON.stringify(formData, null, 2));
+            
+            await axios.put(`${API_URL_BACKEND}/estudiante/modificar-perfil/${userData._id}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 }
             });
-
+            console.log("formulario actualizar: ",JSON.stringify(values, null, 2));
+            
             Toast.show({
                 type: "success",
                 text1: "Actualización Realizada con Éxito",
@@ -83,8 +101,7 @@ export default function PerfilEstudiante() {
                 launchCamera({ mediaType: 'photo' }, (response) => {
                     if (response.assets) {
                         setFieldValue('fotografia', response.assets[0].uri);
-                        console.log("foto tomada:", response.assets[0].uri);
-                        
+                        console.log("foto tomada:", response.assets[0].uri);   
                     }
                 });
             } else {
