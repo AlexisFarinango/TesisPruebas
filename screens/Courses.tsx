@@ -22,8 +22,8 @@ export default function Materias() {
             });
             if (response.status === 200) {
                 setCursos(response.data.informacionCursos); // Actualizamos el estado de cursos
-                console.log("cursitos",response.data.informacionCursos);
-                
+                console.log("cursitos", response.data.informacionCursos);
+
                 Toast.show({
                     type: "success",
                     text1: "Cursos Encontrados",
@@ -83,18 +83,26 @@ export default function Materias() {
         <View style={styles.container}>
             <View style={styles.container2}>
                 <Text style={styles.title}>Cursos Asignados</Text>
-
+                <Text style={styles.description}>
+                    Este módulo te permite mediante código registrarte a un curso
+                </Text>
                 <Toast />
+                <View style={styles.cursoinput}>
+                    <View style={styles.inputColumn}>
+                        <TextInput
+                            style={styles.prefix}
+                            placeholder="Ingresa el Código del Curso"
+                            value={cursoCodigo}
+                            onChangeText={setCursoCodigo}
+                        />
+                    </View>
 
-                <TouchableOpacity style={styles.addButton} onPress={agregarCurso}>
-                    <Text style={styles.addButtonText}>Registrarse en Curso</Text>
-                </TouchableOpacity>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Ingresa el Código del Curso"
-                    value={cursoCodigo}
-                    onChangeText={setCursoCodigo}
-                />
+                    <View style={styles.buttonColumn}>
+                        <TouchableOpacity style={styles.addButton2} onPress={agregarCurso}>
+                            <Text style={styles.addButtonText}>Registrarse</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
 
                 <ScrollView style={styles.cursosContainer}>
                     {cursos.map((curso, index) => (
@@ -102,7 +110,6 @@ export default function Materias() {
                             <Text style={styles.cursoNombre}>{curso.materia}</Text>
                             <Text style={styles.cursoInfo}>Docente: {curso.docente.nombre} {curso.docente.apellido}</Text>
                             <Text style={styles.cursoInfo}>Paralelo: {curso.paralelo}</Text>
-                            <Text style={styles.cursoInfo}>Horario: {curso.horario} {curso.docente.horario}</Text>
                         </View>
                     ))}
                 </ScrollView>
@@ -149,7 +156,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
         textAlign: 'center',
-        marginBottom: 20,
     },
     input: {
         backgroundColor: '#FFF',
@@ -159,18 +165,6 @@ const styles = StyleSheet.create({
         borderColor: '#DDD',
         fontSize: 16,
         marginBottom: 15,
-    },
-    addButton: {
-        backgroundColor: '#007BFF',
-        padding: 15,
-        borderRadius: 10,
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    addButtonText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: 'bold',
     },
     cursosContainer: {
         flex: 1,
@@ -217,5 +211,44 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         resizeMode: 'contain',
+    },
+    cursoinput: {
+        flexDirection: 'row', // Organiza elementos en fila
+        alignItems: 'center',
+        marginVertical: 10,
+        gap: 10, // Espacio entre columnas
+    },
+    inputColumn: {
+        flex: 2, // Toma 2/3 del espacio disponible
+    },
+    buttonColumn: {
+        flex: 1, // Toma 1/3 del espacio disponible
+    },
+    prefix: {
+        backgroundColor: '#FFF',
+        padding: 15,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#DDD',
+        fontSize: 16,
+        fontWeight: 'normal',
+    },
+    addButton2: {
+        backgroundColor: '#007BFF',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        // height: '20%', // Misma altura que el input
+    },
+    addButtonText: {
+        color: '#FFF',
+        fontSize: 14, // Texto más pequeño
+        fontWeight: 'bold',
+    },
+    description: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 5,
     },
 });

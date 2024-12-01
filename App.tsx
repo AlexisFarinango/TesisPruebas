@@ -10,7 +10,6 @@ import StudentNavigation from "./RoutesStudent";
 import TeacherNavigation from "./RoutesTeacher";
 import TokenValidado from "./screens/TokenValidate";
 import { AuthProvider } from './context/AuthContext'; // Ajusta la ruta según tu estructura
-import { Linking } from 'react-native';
 import TokenValidadoRegistro from "./screens/TokenValidateRegister";
 
 

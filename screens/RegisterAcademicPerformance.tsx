@@ -1,11 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList, Modal } from "react-native";
 import { API_URL_BACKEND } from '@env';
 import { jwtDecode } from 'jwt-decode';
 import Toast from "react-native-toast-message";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 
 export default function RegistrarAsistencias() {
@@ -18,7 +19,6 @@ export default function RegistrarAsistencias() {
             fontSize: 24,
             padding: 20,
             fontWeight: "bold",
-            marginBottom: 20,
             textAlign: "center",
         },
         tableContainer: {
@@ -42,7 +42,7 @@ export default function RegistrarAsistencias() {
             color: "#fff", // Letras blancas
             fontWeight: "bold",
             fontSize: 14,
-            width:125,  // Ancho de cada columna (ajustable según necesidad)
+            width: 125,  // Ancho de cada columna (ajustable según necesidad)
             textAlign: "center",
         },
         tableRow: {
@@ -106,7 +106,9 @@ export default function RegistrarAsistencias() {
             shadowOpacity: 0.2,
             shadowRadius: 1.41,
             elevation: 2,
-    
+            width: '95%', // Ajustado para una columna
+            alignSelf: 'center', // Centra la tarjeta
+
         },
         highlight: {
             backgroundColor: '#FFEBB0',
@@ -118,30 +120,31 @@ export default function RegistrarAsistencias() {
             textAlign: 'center',
         },
         grid: {
-            paddingHorizontal: 20,
+            paddingHorizontal: 10,
+            paddingVertical: 10,
         },
-        row: {
-            justifyContent: 'space-between',
+        description: {
+            fontSize: 14,
+            textAlign: 'center',
+            // marginBottom: 5,
         },
     });
-    
-
-    // const data = [
-    //     { id: 1, title: 'Química', screen:'Detalle Registro Actuacion'},
-    //     { id: 2, title: 'Matemáticas',screen:'Detalle Registro Actuacion'},
-    //     { id: 3, title: 'Física', screen:'Detalle Registro Actuacion'},
-    // ];
     const [cursos, setCursos] = useState([]);
-    const navigation=useNavigation();
+    const navigation = useNavigation();
+    const { logout } = useContext(AuthContext);
+    const handleLogout = async () => {
+        await logout();  // Llamar la función logout del contexto
+        navigation.navigate("Iniciar Sesion");  // Navegar a la pantalla de inicio de sesión
+    };
     const updateCursos = async () => {
         const token = await AsyncStorage.getItem('userToken');
-        console.log("token obtenido en context docente",token);
+        console.log("token obtenido en context docente", token);
         const decode = jwtDecode(token);
-        const idDocente = decode.id 
-        console.log("ruta",`${API_URL_BACKEND}/curso/visualizar`);
-        
+        const idDocente = decode.id
+        console.log("ruta", `${API_URL_BACKEND}/curso/visualizar`);
+
         try {
-            const response = await axios.post(`${API_URL_BACKEND}/curso/visualizar`,{
+            const response = await axios.post(`${API_URL_BACKEND}/curso/visualizar`, {
                 docenteId: idDocente
             }, {
                 headers: {
@@ -150,8 +153,8 @@ export default function RegistrarAsistencias() {
             });
             if (response.status === 200) {
                 setCursos(response.data); // Actualizamos el estado de cursos
-                console.log("cursitos",response.data);
-                
+                console.log("cursitos", response.data);
+
                 Toast.show({
                     type: "success",
                     text1: "Cursos Encontrados",
@@ -172,58 +175,20 @@ export default function RegistrarAsistencias() {
             console.log("Error al obtener los cursos:", error);
         }
     };
-    // const renderItem = ({ item }) => (
-    //     <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate("Detalle Registro Actuacion", {materia: item.materia, paralelo: item.paralelo, semestre: item.semestre})}>
-    //         <Text style={styles.cardText}>{item.materia}</Text>
-    //     </TouchableOpacity>
-    // );
-    // const validarFecharegistroActuaciones = async()=> {
-    //     const token = await AsyncStorage.getItem('userToken');
-    //     const obtenerFechaActual = () => {
-    //         const ahora = new Date();
-    //         const anio = ahora.getFullYear();
-    //         const mes = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
-    //         const dia = String(ahora.getDate()).padStart(2, '0');
-    //         return `${dia}/${mes}/${anio}`;
-    //     };
-        
-    //     const fechaActual = obtenerFechaActual();
-    //     console.log("Fecha formateada:", fechaActual);
-        
-    //     try {
-    //         const response = await axios.post(`${API_URL_BACKEND}/actuacion/visualizar`,{
-    //             materia: "Programación",
-    //             paralelo: "GR1",
-    //             semestre: "2024-B"
-    //         },{
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}`
-    //             }
-    //         });
-            
-
-    //         console.log("respuesta validar Fecha:",response.data);
-    //         console.log("respuesta validar Fecha:",response.data.map((item)=>(item.fecha_actuaciones)));
-            
-    //     } catch (error) {
-    //         console.log("Error al obtener fecha",error);
-            
-    //     }
-    // }
     const renderItem = ({ item }) => (
-        <TouchableOpacity 
-            style={[styles.card, item.highlight && styles.highlight]} 
+        <TouchableOpacity
+            style={[styles.card, item.highlight && styles.highlight]}
             onPress={() => verificarFechaRegistro(item)}
         >
             <Text style={styles.cardText}>{item.materia}</Text>
         </TouchableOpacity>
     );
-    
+
     const verificarFechaRegistro = async (item) => {
         const token = await AsyncStorage.getItem('userToken');
-        console.log("datos item: ",item);
-        
-        
+        console.log("datos item: ", item);
+
+
         const obtenerFechaActual = () => {
             const ahora = new Date();
             const anio = ahora.getFullYear();
@@ -231,10 +196,10 @@ export default function RegistrarAsistencias() {
             const dia = String(ahora.getDate()).padStart(2, '0');
             return `${dia}/${mes}/${anio}`;
         };
-        
+
         const fechaActual = obtenerFechaActual();
         console.log("Fecha actual:", fechaActual);
-        
+
         try {
             // Realiza la consulta para obtener las actuaciones
             const response = await axios.post(`${API_URL_BACKEND}/actuacion/visualizar`, {
@@ -246,19 +211,19 @@ export default function RegistrarAsistencias() {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            
+
             const actuaciones = response.data; // Obtén los datos de la respuesta
             console.log("Actuaciones obtenidas:", actuaciones);
-    
+
             // Busca si la fecha actual existe en alguna de las `fecha_actuaciones`
-            const fechaEncontrada = actuaciones.some(actuacion => 
+            const fechaEncontrada = actuaciones.some(actuacion =>
                 actuacion.fecha_actuaciones.includes(fechaActual)
             );
-    
+
             if (fechaEncontrada) {
                 // Muestra una notificación si la fecha actual ya está registrada
                 Toast.show({
-                    type:"error",
+                    type: "error",
                     text1: "Las actuaciones con la fecha actual ya fueron registradas"
                 });
             } else {
@@ -270,8 +235,16 @@ export default function RegistrarAsistencias() {
                 });
             }
         } catch (error) {
-            console.log("Error al verificar fecha de registro:", error);
-            ToastAndroid.show("Error al verificar actuaciones", ToastAndroid.LONG);
+            const status = error.response.status;
+            if (status === 400) {
+                Toast.show({
+                    type: "error",
+                    text1: "No Existen Estudiantes Registrados en la Materia"
+                })
+                console.log("No Existen Estudiantes Registrados en la Materia:", error);
+            } else {
+                console.log("Error al verificar fecha de registro:", error);
+            }
         }
     };
     useEffect(() => {
@@ -282,26 +255,29 @@ export default function RegistrarAsistencias() {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Actuaciones</Text>
+            <Text style={styles.description}>
+                Este módulo te permite registrar actuaciones de los estudiantes presentes en la fecha actual
+            </Text>
             <Toast />
             <FlatList
                 data={cursos}
                 renderItem={renderItem}
                 keyExtractor={item => item.materia.toString()}
-                numColumns={2}
+                numColumns={1}
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={styles.grid}
             />
             <View style={styles.bottomNav}>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Modulos')}>
-                    <Image source={require('../icons/inicio.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Modulos')}>
+                    <Image source={require('../icons/inicio.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Inicio</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Ver Actuaciones')}>
-                    <Image source={require('../icons/asistencias.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Ver Actuaciones')}>
+                    <Image source={require('../icons/asistencias.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={()=>navigation.navigate('Iniciar Sesion')}>
-                    <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon}/>
+                <TouchableOpacity style={styles.navItem} onPress={() => handleLogout()}>
+                    <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>
             </View>
