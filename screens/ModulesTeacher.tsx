@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: 20,
+        color: "#666666",
     },
     grid: {
         paddingHorizontal: 10,
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         textAlign: 'center',
+        color: "#666666",
     },
     cardSubText: {
         fontSize: 14,

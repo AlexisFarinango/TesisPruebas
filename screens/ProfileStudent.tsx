@@ -15,8 +15,21 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 
 // Función para formatear fecha
 const formatearfecha = (fechaISO) => {
+    console.log("fecha nacimiento", fechaISO);
+    
+    // Crear la fecha a partir de la cadena ISO
     const fecha = new Date(fechaISO);
-    return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    
+    // Ajustar la fecha para evitar el desfase
+    const fechaLocal = new Date(fecha.getTime() + fecha.getTimezoneOffset() * 60000);
+    
+    console.log("fecha nacimiento ajustada", fechaLocal);
+    
+    // Formatear la fecha
+    const fechaFormateada = fechaLocal.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    console.log("fecha nacimiento formateada", fechaFormateada);
+    
+    return fechaFormateada;
 };
 
 // Esquema de validación con Yup
@@ -31,14 +44,14 @@ const validationSchema = Yup.object().shape({
 export default function PerfilEstudiante() {
     const navigation = useNavigation();
     const { userData, datosusuario } = useContext(AuthContext);
-    console.log("datos del perfil",userData);
-    
+    console.log("datos del perfil", userData);
+
 
     const handleUpdate = async (values) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
             console.log("valores", values);
-            
+
             // Crear un FormData para enviar la fotografía correctamente
             const formData = new FormData();
             formData.append('nombre', values.nombre);
@@ -46,7 +59,7 @@ export default function PerfilEstudiante() {
             formData.append('direccion', values.direccion);
             formData.append('ciudad', values.ciudad);
             formData.append('telefono', values.telefono);
-            
+
             // Verificar si hay una nueva fotografía y agregarla al FormData
             if (values.fotografia) {
                 formData.append('fotografia', {
@@ -57,15 +70,15 @@ export default function PerfilEstudiante() {
             }
 
             console.log("Este es el formulario:", JSON.stringify(formData, null, 2));
-            
+
             await axios.put(`${API_URL_BACKEND}/estudiante/modificar-perfil/${userData._id}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 }
             });
-            console.log("formulario actualizar: ",JSON.stringify(values, null, 2));
-            
+            console.log("formulario actualizar: ", JSON.stringify(values, null, 2));
+
             Toast.show({
                 type: "success",
                 text1: "Actualización Realizada con Éxito",
@@ -101,7 +114,7 @@ export default function PerfilEstudiante() {
                 launchCamera({ mediaType: 'photo' }, (response) => {
                     if (response.assets) {
                         setFieldValue('fotografia', response.assets[0].uri);
-                        console.log("foto tomada:", response.assets[0].uri);   
+                        console.log("foto tomada:", response.assets[0].uri);
                     }
                 });
             } else {
@@ -153,6 +166,7 @@ export default function PerfilEstudiante() {
             paddingHorizontal: 15,
             marginBottom: 15,
             backgroundColor: "#fff",
+            color: "#666666",
         },
         readonlyInput: {
             backgroundColor: "#f5f5f5",
@@ -183,6 +197,7 @@ export default function PerfilEstudiante() {
             paddingHorizontal: 0,
             marginBottom: 10,
             backgroundColor: "#fff",
+            color: "#666666",
         },
         barNavicon: {
             width: 30,
@@ -210,6 +225,7 @@ export default function PerfilEstudiante() {
             fontSize: 16,
             textAlign: 'center',
             marginBottom: 10,
+            color: "#666666",
         },
     });
 
@@ -219,12 +235,12 @@ export default function PerfilEstudiante() {
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
+                <Toast />
                 <View style={styles.container}>
-                    <Toast/>
                     <Text style={styles.title}>Perfil de Usuario</Text>
                     <Text style={styles.description}>
-                    Este módulo te permite ver y actualizar tu perfil
-                </Text>
+                        Este módulo te permite ver y actualizar tu perfil
+                    </Text>
                     <Formik
                         initialValues={{
                             nombre: userData.nombre || '',

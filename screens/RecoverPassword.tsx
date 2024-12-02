@@ -72,7 +72,7 @@ export default function RecuperarContra(){
             paddingHorizontal: 15,
             fontSize: 16,
             marginBottom: 20,
-            color: "#333",
+            color: "#666666",
         },
         button: {
             backgroundColor: "#007BFF",  // Rojo

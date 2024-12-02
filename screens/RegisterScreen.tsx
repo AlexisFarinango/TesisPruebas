@@ -35,6 +35,7 @@ export default function RegistroEstudiante() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const navigation = useNavigation();
+    const [imageError, setImageError] = useState(''); 
 
 
     // Solicitar permiso de cámara y capturar foto
@@ -75,6 +76,12 @@ export default function RegistroEstudiante() {
 
     // Manejar el envío del formulario
     const handleSubmit = async (values) => {
+        if (!values.fotografia) {
+            setImageError('La imagen es requerida.'); // Establecer mensaje de error
+            return; // Detener el envío si no hay imagen
+        } else {
+            setImageError(''); // Limpiar el mensaje de error si hay imagen
+        }
         const formData = new FormData();
         formData.append('nombre', values.nombre);
         formData.append('apellido', values.apellido);
@@ -192,7 +199,7 @@ export default function RegistroEstudiante() {
                         onSubmit={handleSubmit}>
                         {({ handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched }) => (
                             <>
-                                <Text>Nombres:</Text>
+                                <Text style={styles.labeldos}>Nombres:</Text>
                                 <TextInput
                                     style={styles.input}
                                     onChangeText={text => {
@@ -206,7 +213,7 @@ export default function RegistroEstudiante() {
                                 />
                                 {touched.nombre && errors.nombre && <Text style={styles.error}>{errors.nombre}</Text>}
 
-                                <Text>Apellidos:</Text>
+                                <Text style={styles.labeldos}>Apellidos:</Text>
                                 <TextInput
                                     style={styles.input}
                                     onChangeText={text => {
@@ -221,7 +228,7 @@ export default function RegistroEstudiante() {
                                 />
                                 {touched.apellido && errors.apellido && <Text style={styles.error}>{errors.apellido}</Text>}
 
-                                <Text>Cédula:</Text>
+                                <Text style={styles.labeldos}>Cédula:</Text>
                                 <TextInput
                                     style={styles.input}
                                     onChangeText={text => {
@@ -237,7 +244,7 @@ export default function RegistroEstudiante() {
                                 />
                                 {touched.cedula && errors.cedula && <Text style={styles.error}>{errors.cedula}</Text>}
 
-                                <Text>Correo Institucional:</Text>
+                                <Text style={styles.labeldos}>Correo Institucional:</Text>
                                 <TextInput
                                     style={styles.input}
                                     onChangeText={text => {
@@ -251,7 +258,8 @@ export default function RegistroEstudiante() {
                                 />
                                 {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
 
-                                <Text>Contraseña:</Text>
+                                <Text style={styles.labeldos}>Contraseña:</Text>
+                                <Text style={styles.selectedDate}>Recuerda que tu contraseña iniciara con "EST"</Text>
                                 <View style={styles.passwordContainer}>
                                     <Text style={styles.prefix}>EST</Text>
                                     <TextInput
@@ -273,7 +281,7 @@ export default function RegistroEstudiante() {
                                     </TouchableOpacity>
                                 </View>
 
-                                <Text style={styles.label}>Fecha de Nacimiento:</Text>
+                                <Text style={styles.labeldos}>Fecha de Nacimiento:</Text>
                                 <TouchableOpacity
                                     style={styles.customButton}
                                     onPress={() => setShowDatePicker(true)}
@@ -294,7 +302,7 @@ export default function RegistroEstudiante() {
                                 {values.fecha_nacimiento && <Text style={styles.selectedDate}>Fecha seleccionada: {formatDate(new Date(values.fecha_nacimiento))}</Text>}
                                 {touched.fecha_nacimiento && errors.fecha_nacimiento && <Text style={styles.error}>{errors.fecha_nacimiento}</Text>}
 
-                                <Text>Dirección:</Text>
+                                <Text style={styles.labeldos}>Dirección:</Text>
                                 <TextInput
                                     style={styles.input}
                                     onChangeText={text => {
@@ -308,7 +316,7 @@ export default function RegistroEstudiante() {
                                 />
                                 {touched.direccion && errors.direccion && <Text style={styles.error}>{errors.direccion}</Text>}
 
-                                <Text>Ciudad:</Text>
+                                <Text style={styles.labeldos}>Ciudad:</Text>
                                 <TextInput
                                     style={styles.input}
                                     onChangeText={text => {
@@ -322,7 +330,7 @@ export default function RegistroEstudiante() {
                                 />
                                 {touched.ciudad && errors.ciudad && <Text style={styles.error}>{errors.ciudad}</Text>}
 
-                                <Text>Teléfono:</Text>
+                                <Text style={styles.labeldos}>Teléfono:</Text>
                                 <TextInput
                                     style={styles.input}
                                     onChangeText={text => {
@@ -336,6 +344,7 @@ export default function RegistroEstudiante() {
                                     keyboardType="numeric"
                                 />
                                 {touched.telefono && errors.telefono && <Text style={styles.error}>{errors.telefono}</Text>}
+                                {imageError ? <Text style={styles.errordos}>{imageError}</Text> : null}
                                 <TouchableOpacity
                                     style={styles.customButton}
                                     onPress={() => requestCameraPermission(setFieldValue)}
@@ -369,6 +378,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         marginTop: 30,
         textAlign: "center",
+        color: "#666666",
     },
     container: {
         padding: 20,
@@ -381,6 +391,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         borderRadius: 5,
         backgroundColor: "#fff",
+        color: "#666666",
     },
     error: {
         color: 'red',
@@ -403,11 +414,13 @@ const styles = StyleSheet.create({
     prefix: {
         marginRight: 5, // Espacio entre "EST" y el input
         fontWeight: 'bold', // Opcional: formato del texto "EST"
+        color: "#666666",
     },
     inputpassword: {
         flex: 1, // Hace que el input ocupe el resto del espacio disponible
         height: 40, // Altura del TextInput
         backgroundColor: "#fff",
+        color: "#666666",
     },
     checkboxContainer: {
         flexDirection: 'row',
@@ -436,6 +449,7 @@ const styles = StyleSheet.create({
     },
     helperText: {
         marginLeft: 10,
+        color: "#666666",
     },
     label: {
         fontSize: 16,
@@ -469,5 +483,16 @@ const styles = StyleSheet.create({
         alignItems: 'center', // Alinear el texto al centro
         justifyContent: 'center',
         marginVertical: 10, // Espaciado vertical
+    },
+    labeldos: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#003366",
+    },
+    errordos: {
+        color: 'red',
+        fontSize: 12,
+        marginVertical: 5,
+        textAlign: 'center', // Centra el mensaje
     },
 });

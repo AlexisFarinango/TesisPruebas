@@ -18,6 +18,7 @@ export default function Asistencias() {
             padding: 20,
             fontWeight: "bold",
             textAlign: "center",
+            color: "#666666",
         },
         tableContainer: {
             marginBottom: 20,
@@ -124,6 +125,7 @@ export default function Asistencias() {
         description: {
             fontSize: 16,
             textAlign: 'center',
+            color: "#666666",
         },
     });
 

@@ -438,12 +438,14 @@ export default function DetalleActuaciones() {
                                 <Image source={require('../icons/microfono.png')} style={styles.icon} />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.addButton} onPress={guardarDescripcion}>
-                            <Text style={styles.addButtonText}>Añadir</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.retocederfondo} onPress={cerrarModal}>
-                            <Text style={styles.addButtonText}>Cancelar</Text>
-                        </TouchableOpacity>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.addButton} onPress={guardarDescripcion}>
+                                <Text style={styles.addButtonText}>Añadir</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.retocederfondo} onPress={cerrarModal}>
+                                <Text style={styles.addButtonText}>Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -456,15 +458,15 @@ export default function DetalleActuaciones() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text>Permite aumentar las actuaciones de cada estudiante</Text>
+                        <Text style={styles.textodos}>Permite aumentar las actuaciones de cada estudiante</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/aumentar.png')} style={styles.icondos} />
                         </View>
-                        <Text>Permite disminuir las actuaciones de cada estudiante</Text>
+                        <Text style={styles.title}>Permite disminuir las actuaciones de cada estudiante</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/disminuir.png')} style={styles.icondos} />
                         </View>
-                        <Text>Permite registrar 3 descripciones por medio de voz o texto de cada estudiante durante la clase</Text>
+                        <Text style={styles.title}>Permite registrar 3 descripciones por medio de voz o texto de cada estudiante durante la clase</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/microfono.png')} style={styles.icondos} />
                         </View>
@@ -492,6 +494,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 5,
+        color: "#666666",
     },
     fecha: {
         fontSize: 16,
@@ -604,6 +607,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginBottom: 15,
         fontWeight: 'bold',
+        color: "#666666",
     },
     textBoxContainer: {
         width: '100%',
@@ -613,7 +617,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 15,
     },
     textBox: {
         width: '90%',
@@ -625,6 +628,7 @@ const styles = StyleSheet.create({
     textInput: {
         flex: 1,
         fontSize: 16,
+        color: "#666666",
     },
     micButton: {
         position: 'absolute',
@@ -635,12 +639,12 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     addButton: {
-        marginTop: 20,
-        backgroundColor: '#4A90E2',
-        padding: 15,
-        borderRadius: 10,
-        width: '100%',
-        alignItems: 'center',
+        flex: 1, // Ambos botones ocuparán el mismo espacio
+        marginHorizontal: 5, // Espacio entre los botones
+        backgroundColor: '#007BFF', // Color de fondo (ajusta según sea necesario)
+        paddingVertical: 15, // Espaciado vertical
+        borderRadius: 10, // Bordes redondeados
+        alignItems: 'center', // Centra el texto
     },
     addButtonText: {
         color: '#fff',
@@ -648,11 +652,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     retocederfondo: {
-        marginTop: 20,
+        flex: 1, // Ambos botones ocuparán el mismo espacio
+        marginHorizontal: 5, // Espacio entre los botones
         backgroundColor: '#e52510',
-        padding: 15,
+        paddingVertical: 15, // Espaciado vertic
         borderRadius: 10,
-        width: '50%',
         alignItems: 'center',
     },
     noDataText: {
@@ -713,5 +717,13 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         marginRight: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row', // Alinea los botones en fila
+        justifyContent: 'space-between', // Espacio entre los botones
+        marginTop: 20, // Espacio superior opcional
+    },
+    textodos: {
+        color: "#666666",
     },
 });

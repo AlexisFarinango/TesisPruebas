@@ -227,6 +227,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 20,
+        color: "#666666",
     },
     passwordContainer: {
         marginVertical: 10,
@@ -240,11 +241,13 @@ const styles = StyleSheet.create({
     prefix: {
         marginRight: 5, // Espacio entre "EST" y el input
         fontWeight: 'bold', // Opcional: formato del texto "EST"
+        color: "#666666",
     },
     modalInput: {
         flex: 1, // Hace que el input ocupe el resto del espacio disponible
         height: 40, // Altura del TextInput
         backgroundColor: "#fff",
+        color: "#666666",
     },
     modalButton: {
         backgroundColor: '#007BFF',

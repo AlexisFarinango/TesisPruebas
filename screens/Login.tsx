@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: '#888',
+    color: "#666666",
   },
   footerLink: {
     fontSize: 14,
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   },
   helperText: {
     marginLeft: 10,
+    color: "#666666",
   },
 });
 
@@ -182,7 +183,7 @@ export default function Login() {
         source={require('../icons/logo.webp')}
         style={styles.profileImage}
       />
-      <Text style={styles.title}>Iniciar Sesion</Text>
+      <Text style={styles.title}>Iniciar Sesión</Text>
       <TextInput style={styles.input}
         placeholder="Correo Institucional"
         placeholderTextColor={"#888"}
@@ -211,11 +212,11 @@ export default function Login() {
       <TouchableOpacity
         style={styles.button}
         onPress={handleLogin}
-      ><Text style={styles.buttonText}>Entrar</Text>
+      ><Text style={styles.buttonText}>Ingresar</Text>
       </TouchableOpacity>
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Recuperar Contraseña')}>
-          <Text>¿Has olvidado la Contraseña?</Text>
+          <Text style={{ color: "#666666",}}>¿Has olvidado la Contraseña?</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>

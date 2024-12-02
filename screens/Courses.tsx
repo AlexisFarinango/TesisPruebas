@@ -73,7 +73,7 @@ export default function Materias() {
         } catch (error) {
             Toast.show({
                 type: "error",
-                text1: "Hubo un problema revisa el codigo",
+                text1: "Revisa el código ingresado o contáctate con el docente",
             });
             console.log("Error al registrar en el curso:", error);
         }
@@ -84,7 +84,7 @@ export default function Materias() {
             <View style={styles.container2}>
                 <Text style={styles.title}>Cursos Asignados</Text>
                 <Text style={styles.description}>
-                    Este módulo te permite mediante código registrarte a un curso
+                    Este módulo te permite mediante un código proporcionado por el docente inscribirse a un curso
                 </Text>
                 <Toast />
                 <View style={styles.cursoinput}>
@@ -103,6 +103,13 @@ export default function Materias() {
                         </TouchableOpacity>
                     </View>
                 </View>
+
+                {/* Validación de cursos */}
+                {cursos.length === 0 ? (
+                    <Text style={styles.noCoursesMessage}>No existen cursos registrados, inscríbete en un curso.</Text>
+                ) : (
+                    <Text style={styles.registeredCoursesMessage}>Cursos Registrados</Text>
+                )}
 
                 <ScrollView style={styles.cursosContainer}>
                     {cursos.map((curso, index) => (
@@ -232,6 +239,7 @@ const styles = StyleSheet.create({
         borderColor: '#DDD',
         fontSize: 16,
         fontWeight: 'normal',
+        color: "#666666",
     },
     addButton2: {
         backgroundColor: '#007BFF',
@@ -250,5 +258,20 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
         marginBottom: 5,
+        color: "#666666",
+    },
+    noCoursesMessage: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'gray',
+        textAlign: 'center',
+        marginVertical: 20,
+    },
+    registeredCoursesMessage: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#003366",
+        textAlign: 'center',
+        marginBottom: 10,
     },
 });

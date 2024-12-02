@@ -18,11 +18,13 @@ export default function Asistencias() {
             padding: 20,
             fontWeight: "bold",
             textAlign: "center",
+            color: "#666666",
         },
         description: {
             fontSize: 16,
             textAlign: 'center',
             marginBottom: 20,
+            color: "#666666",
         },
         tableContainer: {
             marginBottom: 20,
@@ -59,6 +61,7 @@ export default function Asistencias() {
         rowText: {
             fontSize: 14,
             textAlign: 'center',
+            color: "#666666",
         },
         button: {
             backgroundColor: "#cc0605", // Rojo
@@ -167,6 +170,7 @@ export default function Asistencias() {
         descriptiondos: {
             fontSize: 16,
             textAlign: 'center',
+            color: "#666666",
         },
     });
 
@@ -194,18 +198,11 @@ export default function Asistencias() {
             });
             setCursos(response.data.informacionCursos)
         } catch (error) {
-            if (error.response && error.response.status === 404) {
-                Toast.show({
-                    type: "error",
-                    text1: "No se encontraron cursos",
-                    text2:"Registrate en un Curso"
-                });
-            } else {
-                Toast.show({
-                    type: "error",
-                    text1: "Error",
-                });
-            }
+            Toast.show({
+                type: "error",
+                text1: "No se encontraron cursos",
+                text2: "Registrate en un Curso"
+            });
             console.log("Error al obtener los cursos:", error);
         }
     };
@@ -226,7 +223,7 @@ export default function Asistencias() {
             })
             setAsistencias(response.data.fecha_asistencias)
             setEstadoasistencias(response.data.estado_asistencias)
-            
+
         } catch (error) {
             console.log("Error al encontrar asistencias", error);
 
@@ -273,7 +270,7 @@ export default function Asistencias() {
     // };
     const navigation = useNavigation();
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={() => { setSelectedMateria(item.materia); setSelectedParalelo(item.paralelo);setSelectedSemestre(item.semestre); setModalVisible(true) }}>
+        <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={() => { setSelectedMateria(item.materia); setSelectedParalelo(item.paralelo); setSelectedSemestre(item.semestre); setModalVisible(true) }}>
             <Text style={styles.cardText}>{item.materia}</Text>
         </TouchableOpacity>
     );
@@ -283,9 +280,9 @@ export default function Asistencias() {
         <View style={styles.container}>
             <Text style={styles.title}>Asistencias</Text>
             <Text style={styles.descriptiondos}>
-                    Este módulo te permite visualizar las asistencias de los cursos registrados
-                </Text>
-            <Toast/>
+                Este módulo te permite visualizar las asistencias de los cursos registrados
+            </Text>
+            <Toast />
             <FlatList
                 data={cursos}
                 renderItem={renderItem}
@@ -301,9 +298,9 @@ export default function Asistencias() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.title}>Reporte Asistencias</Text>
+                        <Text style={styles.title}>Reporte</Text>
                         <Text style={styles.description}>
-                            Este módulo te permite visualizar las asistencias del estudiante en la materia {selectedMateria}
+                            Este módulo te permite visualizar las asistencias en la materia {selectedMateria}
                         </Text>
                         {asistencias.length === 0 ? (
                             <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
@@ -355,5 +352,5 @@ export default function Asistencias() {
                 </TouchableOpacity>
             </View>
         </View>
-    );    
+    );
 }

@@ -20,6 +20,7 @@ export default function RegistrarAsistencias() {
             padding: 20,
             fontWeight: "bold",
             textAlign: "center",
+            color: "#666666",
         },
         tableContainer: {
             marginBottom: 20,
@@ -126,7 +127,7 @@ export default function RegistrarAsistencias() {
         description: {
             fontSize: 14,
             textAlign: 'center',
-            // marginBottom: 5,
+            color: "#666666",
         },
     });
     const [cursos, setCursos] = useState([]);
