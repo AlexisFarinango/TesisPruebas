@@ -87,7 +87,7 @@ export default function TokenValidado() {
                         text1: `${response.data.msg}`
                     })
                     setTimeout(() => {
-                        navigation.navigate('Iniciar Sesion')
+                        navigation.navigate('Iniciar Sesión')
                     }, 3000);
 
                 } catch (error) {

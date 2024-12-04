@@ -25,45 +25,13 @@ export default function App() {
 }
 
 const MainApp = () => {
-  const [initialRoute, setInitialRoute] = useState("Home");
-  
-  // useEffect(() => {
-  //   // Función para manejar el deep link cuando la aplicación se abre desde un enlace
-  //   const handleDeepLink = (url) => {
-  //     if (url && url.includes("/recuperar-password/")) {
-  //       const token = url.split("/recuperar-password/")[1]; // Extrae el token del URL
-  //       setInitialRoute("Token Validado");
-  //       navigationRef.current?.navigate("Token Validado", { token });
-  //     }
-  //   };
-
-  //   // Obtener el enlace inicial si la app se abre desde un deep link
-  //   const getInitialURL = async () => {
-  //     const initialUrl = await Linking.getInitialURL();
-  //     if (initialUrl) {
-  //       handleDeepLink(initialUrl);
-  //     }
-  //   };
-
-  //   // Escuchar cambios en el deep link mientras la app está abierta
-  //   const urlListener = Linking.addEventListener('url', (event) => {
-  //     handleDeepLink(event.url);
-  //   });
-
-  //   getInitialURL();
-
-  //   // Limpieza del listener al desmontar el componente
-  //   return () => {
-  //     urlListener.remove();
-  //   };
-  // }, []);
-
+  const [initialRoute, setInitialRoute] = useState("Bienvenido");
 
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initialRoute}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Iniciar Sesion" component={Login} />
+        <Stack.Screen name="Bienvenido" component={HomeScreen} />
+        <Stack.Screen name="Iniciar Sesión" component={Login} />
         <Stack.Screen name="Registro" component={RegistroEstudiante} />
         <Stack.Screen name="Recuperar Contraseña" component={RecuperarContra} />
         <Stack.Screen name="Docente" component={TeacherNavigation} options={{headerShown: false}}/>

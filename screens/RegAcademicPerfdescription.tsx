@@ -462,11 +462,11 @@ export default function DetalleActuaciones() {
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/aumentar.png')} style={styles.icondos} />
                         </View>
-                        <Text style={styles.title}>Permite disminuir las actuaciones de cada estudiante</Text>
+                        <Text style={styles.textodos}>Permite disminuir las actuaciones de cada estudiante</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/disminuir.png')} style={styles.icondos} />
                         </View>
-                        <Text style={styles.title}>Permite registrar 3 descripciones por medio de voz o texto de cada estudiante durante la clase</Text>
+                        <Text style={styles.textodos}>Permite registrar 3 descripciones por medio de voz o texto de cada estudiante durante la clase</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/microfono.png')} style={styles.icondos} />
                         </View>

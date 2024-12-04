@@ -44,7 +44,7 @@ export default function TokenValidadoRegistro() {
                     text1: `${response.data.msg}`
                 })
                 setTimeout(()=>{
-                        navigation.navigate('Iniciar Sesion')
+                        navigation.navigate('Iniciar Sesión')
                 },5000);
             } catch (error) {
                 console.log("Se obtuvo un error al validar el token", error);

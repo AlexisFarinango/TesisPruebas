@@ -33,7 +33,7 @@ export default function ModulosEstudiantes() {
     // Función para cerrar sesión
     const handleLogout = async () => {
         await logout();  // Llamar la función logout del contexto
-        navigation.navigate("Iniciar Sesion");  // Navegar a la pantalla de inicio de sesión
+        navigation.navigate("Iniciar Sesión");  // Navegar a la pantalla de inicio de sesión
     };
 
     return (

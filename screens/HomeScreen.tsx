@@ -7,14 +7,14 @@ const { width } = Dimensions.get('window');
 const slides = [
     {
         key: '1',
-        title: 'Toma de Asistencias',
-        description: 'Una aplicación que te permite la toma de asistencias rápidamente.',
+        title: 'Gestión de Perfil',
+        description: 'Una aplicación que te permite gestionar tu perfil estudiantil rápida y sencillamete.',
         image: require('../icons/splashuno.png'),
     },
     {
         key: '2',
         title: 'Registro de Actuaciones',
-        description: 'Registro de Actuaciones por medio de voz.',
+        description: 'Registro de Actuaciones práctico con la opción de agregar descripciones fácilmente mediante comandos de voz.',
         image: require('../icons/splashdos.png'),
     },
     {
@@ -37,7 +37,7 @@ export default function HomeScreen() {
 
     const handleNavigate = () => {
         if (currentIndex === slides.length - 1) {
-            navigation.navigate('Iniciar Sesion');
+            navigation.navigate('Iniciar Sesión');
         } else {
             flatListRef.current.scrollToIndex({ index: currentIndex + 1 });
         }

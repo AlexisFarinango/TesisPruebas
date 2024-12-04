@@ -357,7 +357,7 @@ export default function PerfilEstudiante() {
                     <Image source={require('../icons/actuaciones.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesion')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesión')}>
                     <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>

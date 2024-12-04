@@ -108,7 +108,7 @@ export default function Materias() {
                 {cursos.length === 0 ? (
                     <Text style={styles.noCoursesMessage}>No existen cursos registrados, inscríbete en un curso.</Text>
                 ) : (
-                    <Text style={styles.registeredCoursesMessage}>Cursos Registrados</Text>
+                    <Text style={styles.registeredCoursesMessage}>Cursos en los que te encuentras Registrado</Text>
                 )}
 
                 <ScrollView style={styles.cursosContainer}>
@@ -138,7 +138,7 @@ export default function Materias() {
                     <Image source={require('../icons/actuaciones.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Actuaciones</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesion')}>
+                <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Iniciar Sesión')}>
                     <Image source={require('../icons/cerrarsesion.png')} style={styles.barNavicon} />
                     <Text style={styles.navText}>Cerrar Sesión</Text>
                 </TouchableOpacity>

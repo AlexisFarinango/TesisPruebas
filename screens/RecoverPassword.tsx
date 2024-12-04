@@ -90,7 +90,7 @@ export default function RecuperarContra(){
         <View style={styles.container}>
             <Toast/>
             {/* <Text style={styles.title}>Recuperación de Contraseña</Text> */}
-            <Text style={styles.label}>Ingresa tu correo Electronico</Text>
+            <Text style={styles.label}>Ingresa tu correo Electrónico</Text>
             <TextInput style={styles.input} placeholder="Correo institucional para recuperación" value={email} onChangeText={setEmail} keyboardType="email-address"/>
             <TouchableOpacity style={styles.button} onPress={handleRecuperar}>
                 <Text style={styles.buttonText}>Enviar</Text>
