@@ -34,11 +34,11 @@ const formatearfecha = (fechaISO) => {
 
 // Esquema de validación con Yup
 const validationSchema = Yup.object().shape({
-    nombre: Yup.string().required('El nombre es requerido'),
-    apellido: Yup.string().required('El apellido es requerido'),
-    direccion: Yup.string().required('La dirección es requerida'),
-    ciudad: Yup.string().required('La ciudad es requerida'),
-    telefono: Yup.string().required('El teléfono es requerido'),
+    nombre: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'El nombre solo puede contener letras').required('Nombre Obligatorio').max(40, 'El nombre no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    apellido: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'El apellido solo puede contener letras').required('Apellido Obligatorio').max(40, 'El apellido no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    direccion: Yup.string().trim().required('Dirección Obligatoria').max(30, 'La dirección no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    ciudad: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'La ciudad solo puede contener letras').required('Ciudad Obligatoria').max(30, 'La ciudad no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    telefono: Yup.string().trim().matches(/^[0-9]+$/, 'El teléfono solo puede contener números').required('Teléfono Obligatorio').max(10, 'El teléfono no puede tener más de 10 caracteres').min(10, "Completa tu número de teléfono"),
 });
 
 export default function PerfilEstudiante() {
@@ -82,6 +82,8 @@ export default function PerfilEstudiante() {
             Toast.show({
                 type: "success",
                 text1: "Actualización Realizada con Éxito",
+                visibilityTime: 3000,
+                onShow: () => console.log('Toast mostrado'),
             });
             await datosusuario();
 
@@ -235,7 +237,6 @@ export default function PerfilEstudiante() {
                 style={{ flex: 1 }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-                <Toast />
                 <View style={styles.container}>
                     <Text style={styles.title}>Perfil de Usuario</Text>
                     <Text style={styles.description}>
@@ -253,7 +254,7 @@ export default function PerfilEstudiante() {
                         validationSchema={validationSchema}
                         onSubmit={handleUpdate}
                     >
-                        {({ handleChange, handleSubmit, values, setFieldValue, errors, touched }) => (
+                        {({ handleChange,handleBlur, handleSubmit, values, setFieldValue, errors, touched }) => (
                             <>
                                 <View style={styles.imageContainer}>
                                     <Image
@@ -273,6 +274,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.nombre}
                                             onChangeText={handleChange('nombre')}
+                                            onBlur={handleBlur('nombre')}
                                             placeholder="Nombres"
                                         />
                                         {errors.nombre && touched.nombre && <Text style={{ color: 'red' }}>{errors.nombre}</Text>}
@@ -283,6 +285,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.apellido}
                                             onChangeText={handleChange('apellido')}
+                                            onBlur={handleBlur('apellido')}
                                             placeholder="Apellidos"
                                         />
                                         {errors.apellido && touched.apellido && <Text style={{ color: 'red' }}>{errors.apellido}</Text>}
@@ -307,6 +310,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.direccion}
                                             onChangeText={handleChange('direccion')}
+                                            onBlur={handleBlur('direccion')}
                                             placeholder="Dirección"
                                         />
                                         {errors.direccion && touched.direccion && <Text style={{ color: 'red' }}>{errors.direccion}</Text>}
@@ -317,6 +321,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.ciudad}
                                             onChangeText={handleChange('ciudad')}
+                                            onBlur={handleBlur('ciudad')}
                                             placeholder="Ciudad"
                                         />
                                         {errors.ciudad && touched.ciudad && <Text style={{ color: 'red' }}>{errors.ciudad}</Text>}
@@ -327,6 +332,7 @@ export default function PerfilEstudiante() {
                                             style={styles.input}
                                             value={values.telefono}
                                             onChangeText={handleChange('telefono')}
+                                            onBlur={handleBlur('telefono')}
                                             placeholder="Teléfono"
                                         />
                                         {errors.telefono && touched.telefono && <Text style={{ color: 'red' }}>{errors.telefono}</Text>}
@@ -338,6 +344,7 @@ export default function PerfilEstudiante() {
                             </>
                         )}
                     </Formik>
+                                        <Toast />
                 </View>
             </KeyboardAvoidingView>
             <View style={styles.bottomNav}>
