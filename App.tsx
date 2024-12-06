@@ -25,12 +25,12 @@ export default function App() {
 }
 
 const MainApp = () => {
-  const [initialRoute, setInitialRoute] = useState("Bienvenido");
+  const [initialRoute, setInitialRoute] = useState("Bienvenido(a)");
 
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initialRoute}>
-        <Stack.Screen name="Bienvenido" component={HomeScreen} />
+        <Stack.Screen name="Bienvenido(a)" component={HomeScreen} />
         <Stack.Screen name="Iniciar Sesión" component={Login} />
         <Stack.Screen name="Registro" component={RegistroEstudiante} />
         <Stack.Screen name="Recuperar Contraseña" component={RecuperarContra} />

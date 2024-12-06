@@ -8,7 +8,7 @@ const slides = [
     {
         key: '1',
         title: 'Gestión de Perfil',
-        description: 'Una aplicación que te permite gestionar tu perfil estudiantil rápida y sencillamete.',
+        description: 'Una aplicación que te permite gestionar tu perfil estudiantil rápida y sencillamente.',
         image: require('../icons/splashuno.png'),
     },
     {

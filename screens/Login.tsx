@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL_BACKEND } from '@env'
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../context/AuthContext";
+import Toast from "react-native-toast-message";
 
 
 
@@ -108,14 +109,13 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const navigation = useNavigation();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  
-  
-  
-  
-  
   const handleLogin = async () => {
     if (!email || !password) {
-      alert('Por favor completa los campos');
+      Toast.show({
+        type: 'error',
+            text1: `Lo sentimos, todos los campos deben de estar llenos`,
+            text2: "Completa los campos"
+      })
       return;
     }
     const validacion = password.includes("EST")
@@ -125,28 +125,51 @@ export default function Login() {
           email: email,
           password: password,
         });
-        
+
         const { token } = response.data;
         await AsyncStorage.setItem('userToken', token);
         login(token);
         // const decodedToken = jwtDecode(token);
-        
+
         // Redirige al usuario según su rol
         const user = jwtDecode(token);
         console.log(user);
         // setUser(decoded);
-        
-        
+
+
         if (user.rol === 'docente') {
           navigation.navigate("Docente");
           // setEmail("");
           // setPassword("");
         }
-        
+
       } catch (errorDocente) {
+        const status = errorDocente.response.status;
+        if (status === 403) {
+          Toast.show({
+            type: 'error',
+            text1: `Cuenta no Verificada`,
+          })
+        }else if(status === 404){
+          Toast.show({
+            type: 'error',
+            text1: `Docente no registrado`,
+            text2: "Verifica el correo ingresado",
+          })
+        }else if(status === 401){
+          Toast.show({
+            type: 'error',
+            text1: `Correo o contraseña Incorrecto`,
+          })
+        }else{
+            Toast.show({
+              type: 'error',
+              text1: `Problemas con el Servidor`,
+            })
+        }
         // Si también falla el login de docente, mostramos un mensaje de error
-        alert("Usuario o contraseña incorrectos.");
-        console.log("Error de autenticación:", errorDocente);
+        // alert("Usuario o contraseña incorrectos.");
+        // console.log("Error de autenticación:", errorDocente);
       }
     } else {
       try {
@@ -171,7 +194,30 @@ export default function Login() {
         }
 
       } catch (errorEstudiante) {
-        console.log("Error estudiante: ", errorEstudiante);
+        const status = errorEstudiante.response.status;
+        if (status === 403) {
+          Toast.show({
+            type: 'error',
+            text1: `Cuenta no Verificada`,
+            text2: `Contactate con tu docente`,
+          })
+        }else if(status === 404){
+          Toast.show({
+            type: 'error',
+            text1: `Estudiante no registrado`,
+            text2: "Verifica el correo ingresado",
+          })
+        }else if(status === 401){
+          Toast.show({
+            type: 'error',
+            text1: `Correo o contraseña Incorrecto`,
+          })
+        }else{
+            Toast.show({
+              type: 'error',
+              text1: `Problemas con el Servidor`,
+            })
+        }
       }
     }
   };
@@ -179,6 +225,7 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
+      {/* <Toast/> */}
       <Image
         source={require('../icons/logo.webp')}
         style={styles.profileImage}
@@ -216,7 +263,7 @@ export default function Login() {
       </TouchableOpacity>
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Recuperar Contraseña')}>
-          <Text style={{ color: "#666666",}}>¿Has olvidado la Contraseña?</Text>
+          <Text style={{ color: "#666666", }}>¿Has olvidado la Contraseña?</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>
@@ -225,6 +272,7 @@ export default function Login() {
           <Text style={styles.footerLink}>Regístrate aquí</Text>
         </TouchableOpacity>
       </View>
+      <Toast />
     </View>
   );
 }
