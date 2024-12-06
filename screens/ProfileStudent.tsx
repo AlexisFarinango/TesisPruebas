@@ -334,6 +334,7 @@ export default function PerfilEstudiante() {
                                             onChangeText={handleChange('telefono')}
                                             onBlur={handleBlur('telefono')}
                                             placeholder="Teléfono"
+                                            keyboardType="numeric"
                                         />
                                         {errors.telefono && touched.telefono && <Text style={{ color: 'red' }}>{errors.telefono}</Text>}
                                     </View>
