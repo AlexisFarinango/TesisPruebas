@@ -280,7 +280,7 @@ export default function Asistencias() {
         <View style={styles.container}>
             <Text style={styles.title}>Asistencias</Text>
             <Text style={styles.descriptiondos}>
-                Este módulo te permite visualizar las asistencias de los cursos registrados
+                Este módulo te permite visualizar las asistencias en el curso que te encuentras registrado
             </Text>
             <Toast />
             <FlatList
@@ -303,7 +303,7 @@ export default function Asistencias() {
                             Este módulo te permite visualizar las asistencias en la materia {selectedMateria}
                         </Text>
                         {asistencias.length === 0 ? (
-                            <Text style={styles.noDataText}>No existen Asistencias por el momento</Text>
+                            <Text style={styles.noDataText}>No existen Asistencias</Text>
                         ) : (
                             <>
                                 <View style={styles.tableHeader}>

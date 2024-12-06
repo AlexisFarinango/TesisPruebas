@@ -182,7 +182,7 @@ export default function Asistencias() {
         <View style={styles.container}>
             <Text style={styles.title}>Actuaciones</Text>
             <Text style={styles.description}>
-                Este módulo te permite ver las actuaciones y descripciones en los cursos registrados
+                Este módulo te permite ver las actuaciones y descripciones en los cursos que te encuentras registrado
             </Text>
             <Toast />
             <FlatList

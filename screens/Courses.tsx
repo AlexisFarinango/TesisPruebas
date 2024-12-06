@@ -84,7 +84,7 @@ export default function Materias() {
             <View style={styles.container2}>
                 <Text style={styles.title}>Cursos Asignados</Text>
                 <Text style={styles.description}>
-                    Este módulo te permite mediante un código proporcionado por el docente inscribirse a un curso
+                    Este módulo te permite mediante un código proporcionado por el docente inscribirte a un curso
                 </Text>
                 <Toast />
                 <View style={styles.cursoinput}>
