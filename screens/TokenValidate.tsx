@@ -46,7 +46,8 @@ export default function TokenValidado() {
                 console.log("Se obtuvo un error al validar el token", error);
                 Toast.show({
                     type: "error",
-                    text1: "Revisa el token"
+                    text1: "Código Inválido",
+                    text2: "Revisa el código ingresado"
                 });
             }
         }
