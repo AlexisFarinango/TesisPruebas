@@ -16,19 +16,19 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 // Función para formatear fecha
 const formatearfecha = (fechaISO) => {
     console.log("fecha nacimiento", fechaISO);
-    
+
     // Crear la fecha a partir de la cadena ISO
     const fecha = new Date(fechaISO);
-    
+
     // Ajustar la fecha para evitar el desfase
     const fechaLocal = new Date(fecha.getTime() + fecha.getTimezoneOffset() * 60000);
-    
+
     console.log("fecha nacimiento ajustada", fechaLocal);
-    
+
     // Formatear la fecha
     const fechaFormateada = fechaLocal.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
     console.log("fecha nacimiento formateada", fechaFormateada);
-    
+
     return fechaFormateada;
 };
 
@@ -254,7 +254,7 @@ export default function PerfilEstudiante() {
                         validationSchema={validationSchema}
                         onSubmit={handleUpdate}
                     >
-                        {({ handleChange,handleBlur, handleSubmit, values, setFieldValue, errors, touched }) => (
+                        {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors, touched }) => (
                             <>
                                 <View style={styles.imageContainer}>
                                     <Image
@@ -344,7 +344,7 @@ export default function PerfilEstudiante() {
                             </>
                         )}
                     </Formik>
-                                        <Toast />
+                    <Toast />
                 </View>
             </KeyboardAvoidingView>
             <View style={styles.bottomNav}>
