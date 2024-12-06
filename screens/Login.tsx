@@ -225,7 +225,6 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      {/* <Toast/> */}
       <Image
         source={require('../icons/logo.webp')}
         style={styles.profileImage}

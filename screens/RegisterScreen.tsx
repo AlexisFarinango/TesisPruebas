@@ -11,18 +11,18 @@ import { useNavigation } from "@react-navigation/native";
 
 // Esquema de validación con Yup
 const validacionForm = Yup.object().shape({
-    nombre: Yup.string().required('Nombre Obligatorio').max(30, 'El nombre no puede tener más de 30 caracteres'),
-    apellido: Yup.string().required('Apellido Obligatorio').max(30, 'El apellido no puede tener más de 30 caracteres'),
-    cedula: Yup.string().required('Cedula Obligatoria').max(10, 'La cédula no puede tener más de 10 caracteres'),
-    email: Yup.string().required('Correo Institucional Obligatorio').email("Debe ser un correo válido").matches(
+    nombre: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'El nombre solo puede contener letras').required('Nombre Obligatorio').max(40, 'El nombre no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    apellido: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'El apellido solo puede contener letras').required('Apellido Obligatorio').max(40, 'El apellido no puede tener más de 40 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    cedula: Yup.string().trim().matches(/^[0-9]+$/, 'La cédula solo puede contener números').required('Cedula Obligatoria').max(10, 'La cédula no puede tener más de 10 caracteres').min(10, "Completa tu cédula"),
+    email: Yup.string().trim().required('Correo Institucional Obligatorio').email("Debe ser un correo válido").matches(
         /@(epn\.edu\.ec)$/i,
         'El correo debe ser institucional: @epn.edu.ec'
-    ),
-    password: Yup.string().required('Contraseña Obligatoria'),
+    ).min(3, "Debe existir un minimo de 3 caracteres"),
+    password: Yup.string().trim().required('Contraseña Obligatoria').min(8, "Debe existir un minimo de 8 caracteres"),
     fecha_nacimiento: Yup.string().required("Fecha de Nacimiento Obligatoria"),
-    direccion: Yup.string().required('Dirección Obligatoria').max(30, 'La dirección no puede tener más de 30 caracteres'),
-    ciudad: Yup.string().required('Ciudad Obligatoria').max(30, 'La ciudad no puede tener más de 30 caracteres'),
-    telefono: Yup.string().required('Telefono Obligatorio').max(10, 'El teléfono no puede tener más de 10 caracteres'),
+    direccion: Yup.string().trim().required('Dirección Obligatoria').max(30, 'La dirección no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    ciudad: Yup.string().trim().matches(/^[A-Za-zñÑ\s]+$/, 'La ciudad solo puede contener letras').required('Ciudad Obligatoria').max(30, 'La ciudad no puede tener más de 30 caracteres').min(3, "Debe existir un minimo de 3 caracteres"),
+    telefono: Yup.string().trim().matches(/^[0-9]+$/, 'El teléfono solo puede contener números').required('Teléfono Obligatorio').max(10, 'El teléfono no puede tener más de 10 caracteres').min(10, "Completa tu número de teléfono"),
     fotografia: Yup.mixed().required('Debes capturar una imagen.'),
 });
 
@@ -35,7 +35,7 @@ export default function RegistroEstudiante() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const navigation = useNavigation();
-    const [imageError, setImageError] = useState(''); 
+    const [imageError, setImageError] = useState('');
 
 
     // Solicitar permiso de cámara y capturar foto
@@ -76,8 +76,15 @@ export default function RegistroEstudiante() {
 
     // Manejar el envío del formulario
     const handleSubmit = async (values) => {
-        if (!values.fotografia) {
-            setImageError('La imagen es requerida.'); // Establecer mensaje de error
+        console.log(values.fotografia.uri);
+        
+        if (!values.fotografia?.uri) {
+            Toast.show({
+                type: "error",
+                text1: "No se ha capturado una fotografía"
+            }); // Establecer mensaje de error
+            console.log("No se ha capturado una fotografía");
+            
             return; // Detener el envío si no hay imagen
         } else {
             setImageError(''); // Limpiar el mensaje de error si hay imagen
@@ -114,7 +121,7 @@ export default function RegistroEstudiante() {
             };
 
             let response = await axios.post(`${API_URL_BACKEND}/estudiante/registro-estudiante`, formData, config);
-            if (response.status === 200) {
+            if (response.status === 201) {
                 Toast.show({ type: 'success', text1: 'Usuario Registrado revisa tu correo', text2: 'Registro Exitoso' });
                 setTimeout(() => navigation.navigate('Token Registro'), 3000);
                 console.log(response.data);
@@ -128,16 +135,14 @@ export default function RegistroEstudiante() {
 
                 // Manejo de códigos de estado específicos
                 if (status === 400) {
-                    console.error("Solicitud incorrecta (400) - Cedula ya registrada.");
-                    // Puedes mostrar un mensaje de error específico al usuario, por ejemplo:
-                    Toast.show({ type: 'error', text1: 'Cedula ya Registrada' });
-                    // alert("Cedula ya Registrada")
-                } else if (status === 404) {
-                    console.error("Recurso no encontrado (404) - Email ya registrado.");
-                    Toast.show({ type: 'error', text1: 'Email ya registrado' });
+                    console.error("Solicitud incorrecta (400) ");
+                    Toast.show({ type: 'error', text1: 'Existen campos vacios' });
+                } else if (status === 409) {
+                    console.error("Email o cédula ya registrados.");
+                    Toast.show({ type: 'error', text1: 'Email o cédula ya registrados' });
                 } else if (status === 500) {
-                    console.error("Error del servidor (500) - Hubo un problema al subir foto.");
-                    Toast.show({ type: 'error', text1: 'Error al subir foto' });
+                    console.error("Error del servidor (500)");
+                    Toast.show({ type: 'error', text1: 'Error en el servidor' });
                 } else {
                     console.error(`Error con código ${status}`);
                     // Puedes agregar más códigos de error según sea necesario
@@ -173,7 +178,6 @@ export default function RegistroEstudiante() {
         <View style={{ flex: 1 }}>
             <View>
                 <Text style={styles.title}>Nuevo Estudiante</Text>
-                <Toast />
             </View>
             <View style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={styles.container}>
@@ -267,9 +271,11 @@ export default function RegistroEstudiante() {
                                         placeholder="Ingresa tu contraseña"
                                         secureTextEntry={!passwordVisible} // Cambia la visibilidad
                                         onChangeText={handleChange('password')}
+                                        onBlur={handleBlur('password')}
                                         value={values.password}
                                     />
                                 </View>
+                                {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
                                 <View style={styles.checkboxContainer}>
                                     <Text style={styles.helperText}>
                                         {passwordVisible ? "Contraseña visible" : "Contraseña oculta"}
@@ -344,14 +350,13 @@ export default function RegistroEstudiante() {
                                     keyboardType="numeric"
                                 />
                                 {touched.telefono && errors.telefono && <Text style={styles.error}>{errors.telefono}</Text>}
-                                {imageError ? <Text style={styles.errordos}>{imageError}</Text> : null}
                                 <TouchableOpacity
                                     style={styles.customButton}
                                     onPress={() => requestCameraPermission(setFieldValue)}
+                                    onBlur={handleBlur('fotografia')} 
                                 >
                                     <Text style={styles.buttonText}>Tomar Foto</Text>
                                 </TouchableOpacity>
-
                                 {/* Mostrar imagen capturada */}
                                 {selectedImage && (
                                     <Image source={{ uri: selectedImage }} style={styles.image} />
@@ -368,6 +373,7 @@ export default function RegistroEstudiante() {
                     </Formik>
                 </ScrollView>
             </View>
+            <Toast />
         </View>
     );
 }
