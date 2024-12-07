@@ -119,7 +119,13 @@ export default function DetalleActuaciones() {
         Voice.onSpeechStart = onSpeechStart;
         Voice.onSpeechEnd = stopListening;
         Voice.onSpeechResults = onSpeechResults;
-        Voice.onSpeechError = error => console.log('onSpeechError:', error);
+        Voice.onSpeechError = error => {
+            console.log('onSpeechError:', error); Toast.show({
+                type: 'error',
+                text1: 'El Micrófono se detuvo o no grabó nada',
+                text2: 'Tu micrófono está siendo utilizado o presenta problemas.',
+            })
+        };
 
         return () => {
             Voice.destroy().then(Voice.removeAllListeners);
@@ -277,17 +283,18 @@ export default function DetalleActuaciones() {
             console.log(secondresponse.data);
             Toast.show({
                 type: "success",
-                text1: secondresponse.data.msg
+                text1: "Actuaciones guardadas con éxito",
+                visibilityTime: 3000,
             })
             setTimeout(() => {
-                Toast.hide(); // Esto cerrará el Toast después de 3 segundos
+                // Toast.hide(); // Esto cerrará el Toast después de 3 segundos
+                navigation.goBack();
             }, 3000);
-            navigation.goBack();
         } catch (error) {
             console.log("Error al realizar la actualización en base", error);
             Toast.show({
                 type: "success",
-                text1: "Error al realizar la actualización en base"
+                text1: "Error al realizar el registro de Actuaciones"
             })
             setTimeout(() => {
                 Toast.hide(); // Esto cerrará el Toast después de 3 segundos
@@ -368,7 +375,6 @@ export default function DetalleActuaciones() {
 
     return (
         <View style={styles.container}>
-            <Toast />
             <Text style={styles.title}>Detalle Actuaciones</Text>
             <Text style={styles.fecha}>{obtenerFechaActual()}</Text>
             {actuaciones.length === 0 ? (
@@ -428,13 +434,13 @@ export default function DetalleActuaciones() {
                                 <TextInput
                                     value={descripcion}
                                     onChangeText={setDescripcion}
-                                    placeholder='Descripción de maximo 20 caracteres'
+                                    placeholder='Descripción de máximo 20 caracteres.'
                                     multiline={true}
                                     style={styles.textInput}
                                     maxLength={30}
                                 />
                             </View>
-                            <TouchableOpacity style={styles.micButton} onPress={handleMicrophonePress}>
+                            <TouchableOpacity style={[styles.micButton, escuchando && styles.recordingButton]} onPress={handleMicrophonePress}>
                                 <Image source={require('../icons/microfono.png')} style={styles.icon} />
                             </TouchableOpacity>
                         </View>
@@ -458,11 +464,11 @@ export default function DetalleActuaciones() {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.textodos}>Permite aumentar las actuaciones de cada estudiante</Text>
+                        <Text style={styles.textodos}>Añade actuaciones de cada estudiante</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/aumentar.png')} style={styles.icondos} />
                         </View>
-                        <Text style={styles.textodos}>Permite disminuir las actuaciones de cada estudiante</Text>
+                        <Text style={styles.textodos}>Disminuye actuaciones de cada estudiante</Text>
                         <View style={styles.iconContainer}>
                             <Image source={require('../icons/disminuir.png')} style={styles.icondos} />
                         </View>
@@ -479,6 +485,7 @@ export default function DetalleActuaciones() {
                     </View>
                 </View>
             </Modal>
+            <Toast />
         </View>
     );
 }
@@ -725,5 +732,8 @@ const styles = StyleSheet.create({
     },
     textodos: {
         color: "#666666",
+    },
+    recordingButton: {
+        backgroundColor: '#FDD835', // Color cuando está grabando
     },
 });

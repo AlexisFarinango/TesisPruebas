@@ -38,6 +38,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // const [user, setUser] = useState(""); // Aquí se guarda la decodificación del token (rol e ID)
   const [userData, setUserData] = useState<UserData | null>(null); // Aquí los datos completos del usuario
   const [loading, setLoading] = useState(true); // Estado de carga inicial
+  const [nameDocente, setNamedocente] = useState<UserData | null>(null);
  
   
   
@@ -114,7 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Asegúrate de eliminar el token del encabezado de axios si es necesario
   };
   return (
-    <AuthContext.Provider value={{ userData,login, logout, loading, datosusuario }}>
+    <AuthContext.Provider value={{ userData,login, logout, loading, datosusuario,nameDocente, setNamedocente }}>
       {children}
     </AuthContext.Provider>
   );

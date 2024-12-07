@@ -11,7 +11,7 @@ const data = [
 ];
 
 export default function ModulosDocentes() {
-    const {logout} = useContext(AuthContext);
+    const {logout,nameDocente} = useContext(AuthContext);
     const navigation = useNavigation();
     const renderItem = ({ item }) => (
         <TouchableOpacity style={[styles.card, item.highlight && styles.highlight]} onPress={()=>navigation.navigate(item.screen)}>
@@ -26,7 +26,7 @@ export default function ModulosDocentes() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Bienvenido Docente</Text>
+            <Text style={styles.title}>Bienvenid@ {nameDocente}</Text>
             <FlatList
                 data={data}
                 renderItem={renderItem}

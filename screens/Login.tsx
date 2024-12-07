@@ -106,7 +106,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const [user, setUser] = useState("")
-  const { login } = useContext(AuthContext);
+  const { login,setNamedocente } = useContext(AuthContext);
   const navigation = useNavigation();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const handleLogin = async () => {
@@ -127,6 +127,8 @@ export default function Login() {
         });
 
         const { token } = response.data;
+        setNamedocente(response.data.nombre)
+        
         await AsyncStorage.setItem('userToken', token);
         login(token);
         // const decodedToken = jwtDecode(token);
