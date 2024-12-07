@@ -1,10 +1,11 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import { useNavigation,useFocusEffect } from '@react-navigation/native';
+import React, { useContext, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, BackHandler } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 //importo Contexto
 import { AuthContext } from '../context/AuthContext';
+import RNMinimizeApp from 'react-native-minimize';
 
 
 const data = [
@@ -18,7 +19,21 @@ const data = [
 export default function ModulosEstudiantes() {
     const {userData, logout} = useContext(AuthContext);
     console.log("Esta es la Data en modulos: ",userData);
-    
+    useFocusEffect(
+        useCallback(() => {
+            const handleBackPress = () => {
+                RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
+                return true; // Previene el comportamiento predeterminado
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+            // Limpia el listener cuando se pierde el enfoque
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+            };
+        }, [])
+    );
 
 
     const navigation = useNavigation();

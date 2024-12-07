@@ -4608,6 +4608,11 @@ react-native-image-picker@^7.1.2:
   resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-7.1.2.tgz"
   integrity sha512-b5y5nP60RIPxlAXlptn2QwlIuZWCUDWa/YPUVjgHc0Ih60mRiOg1PSzf0IjHSLeOZShCpirpvSPGnDExIpTRUg==
 
+react-native-minimize@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.npmjs.org/react-native-minimize/-/react-native-minimize-1.0.12.tgz"
+  integrity sha512-hD4Kesa7IJvlm79vDjhQiuvki0viMw4C3dxsw8i3vHzkz0R7aAerrsEDVGgQu6Rc/yRISevQOkh7HqV8mvwvvA==
+
 react-native-permissions@^4.1.5:
   version "4.1.5"
   resolved "https://registry.npmjs.org/react-native-permissions/-/react-native-permissions-4.1.5.tgz"
