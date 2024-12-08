@@ -187,6 +187,7 @@ export default function Login() {
             Toast.show({
               type: 'error',
               text1: `Problemas con el Servidor`,
+              text2: `Revisa tu conexión a Internet`,
             })
         }
         // Si también falla el login de docente, mostramos un mensaje de error
@@ -238,6 +239,7 @@ export default function Login() {
             Toast.show({
               type: 'error',
               text1: `Problemas con el Servidor`,
+              text2: `Revisa tu conexión a Internet`,
             })
         }
       }
