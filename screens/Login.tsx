@@ -161,8 +161,8 @@ export default function Login() {
 
         if (user.rol === 'docente') {
           navigation.navigate("Docente");
-          // setEmail("");
-          // setPassword("");
+          setEmail("");
+          setPassword("");
         }
 
       } catch (errorDocente) {
@@ -211,8 +211,8 @@ export default function Login() {
         // setUser(decoded);
         if (user.rol === 'estudiante') {
           navigation.navigate("Estudiante");
-          // setEmail("");
-          // setPassword("");
+          setEmail("");
+          setPassword("");
         }
 
       } catch (errorEstudiante) {
