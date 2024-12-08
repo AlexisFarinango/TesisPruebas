@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useState, useRef } from 'react';
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import React, { useState, useRef,useCallback } from 'react';
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Modal, BackHandler } from 'react-native';
 import { API_URL_BACKEND } from '@env';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Toast from 'react-native-toast-message';
+import RNMinimizeApp from 'react-native-minimize';
 
 export default function TokenValidado() {
     const [code, setCode] = useState(Array(10).fill(''));
@@ -13,6 +14,21 @@ export default function TokenValidado() {
     const [showPasswords, setShowPasswords] = useState(false); 
     const navigation = useNavigation();
     const inputs = useRef([]);
+    useFocusEffect(
+        useCallback(() => {
+            const handleBackPress = () => {
+                RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
+                return true; // Previene el comportamiento predeterminado
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+            // Limpia el listener cuando se pierde el enfoque
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+            };
+        }, [])
+    );
 
     const handleChangeText = (text, index) => {
         let newCode = [...code];

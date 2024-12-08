@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useRef, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Dimensions } from 'react-native';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -35,8 +36,9 @@ export default function HomeScreen() {
         setCurrentIndex(index);
     };
 
-    const handleNavigate = () => {
+    const handleNavigate = async() => {
         if (currentIndex === slides.length - 1) {
+            // await AsyncStorage.setItem('isFirstLaunch', 'false');
             navigation.navigate('Iniciar Sesión');
         } else {
             flatListRef.current.scrollToIndex({ index: currentIndex + 1 });

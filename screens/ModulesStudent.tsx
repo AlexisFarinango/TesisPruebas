@@ -3,7 +3,6 @@ import React, { useContext, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, BackHandler } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-//importo Contexto
 import { AuthContext } from '../context/AuthContext';
 import RNMinimizeApp from 'react-native-minimize';
 
@@ -53,7 +52,7 @@ export default function ModulosEstudiantes() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Bienvenido {userData?.nombre}</Text>
+            <Text style={styles.title}>Bienvenid@ {userData?.nombre}</Text>
             <FlatList
                 data={data}
                 renderItem={renderItem}

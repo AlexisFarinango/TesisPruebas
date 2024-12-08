@@ -1,12 +1,13 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useContext, useState } from "react";
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native"
+import { useNavigation,useFocusEffect } from "@react-navigation/native";
+import React, { useContext, useState,useCallback } from "react";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, BackHandler } from "react-native"
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL_BACKEND } from '@env'
 import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../context/AuthContext";
 import Toast from "react-native-toast-message";
+import RNMinimizeApp from 'react-native-minimize';
 
 
 
@@ -109,6 +110,25 @@ export default function Login() {
   const { login,setNamedocente } = useContext(AuthContext);
   const navigation = useNavigation();
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+        const handleBackPress = () => {
+            RNMinimizeApp.minimizeApp(); // Envía la aplicación al fondo
+            return true; // Previene el comportamiento predeterminado
+        };
+
+        BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+        // Limpia el listener cuando se pierde el enfoque
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+        };
+    }, [])
+);
+
+
+
   const handleLogin = async () => {
     if (!email || !password) {
       Toast.show({
