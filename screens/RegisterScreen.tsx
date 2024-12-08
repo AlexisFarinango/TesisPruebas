@@ -270,7 +270,15 @@ export default function RegistroEstudiante() {
                                         style={styles.inputpassword}
                                         placeholder="Ingresa tu contraseña"
                                         secureTextEntry={!passwordVisible} // Cambia la visibilidad
-                                        onChangeText={handleChange('password')}
+                                        // onChangeText={handleChange('password')}
+                                        onChangeText={text => {
+                                            // Verifica si el texto contiene espacios
+                                            if (text.includes(' ')) {
+                                                // Si contiene espacios, no actualiza el estado
+                                                return;
+                                            }
+                                            handleChange('password')(text); // Actualiza el estado si no hay espacios
+                                        }}
                                         onBlur={handleBlur('password')}
                                         value={values.password}
                                     />

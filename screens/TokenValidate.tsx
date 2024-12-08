@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, useRef,useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, Modal, BackHandler } from 'react-native';
 import { API_URL_BACKEND } from '@env';
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
@@ -11,9 +11,26 @@ export default function TokenValidado() {
     const [showModal, setShowModal] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPasswords, setShowPasswords] = useState(false); 
+    const [showPasswords, setShowPasswords] = useState(false);
     const navigation = useNavigation();
     const inputs = useRef([]);
+    const handleNewPasswordChange = (text) => {
+        // Verifica si el texto contiene espacios
+        if (text.includes(' ')) {
+            // Si contiene espacios, no actualiza el estado
+            return;
+        }
+        setNewPassword(text); // Actualiza el estado si no hay espacios
+    };
+
+    const handleConfirmPasswordChange = (text) => {
+        // Verifica si el texto contiene espacios
+        if (text.includes(' ')) {
+            // Si contiene espacios, no actualiza el estado
+            return;
+        }
+        setConfirmPassword(text); // Actualiza el estado si no hay espacios
+    };
     useFocusEffect(
         useCallback(() => {
             const handleBackPress = () => {
@@ -87,28 +104,36 @@ export default function TokenValidado() {
                 });
                 return;
             } else {
-                try {
-                    const prefixedNewPassword = `EST${newPassword}`;
-                    const prefixedConfirmPassword = `EST${confirmPassword}`;
-                    // Aquí puedes agregar la lógica para guardar la nueva contraseña en el backend
-                    const response = await axios.post(`${API_URL_BACKEND}/estudiante/nueva-password/${tokenvalidatepass}`, {
-                        password: prefixedNewPassword,
-                        confirmarPassword: prefixedConfirmPassword,
-                    });
-                    console.log("Contraseña cambiada exitosamente");
-
-                    // Cierra el modal después de guardar la contraseña
-                    setShowModal(false);
+                if (newPassword.length < 8 || confirmPassword.length < 8) {
                     Toast.show({
-                        type: 'success',
-                        text1: `${response.data.msg}`
-                    })
-                    setTimeout(() => {
-                        navigation.navigate('Iniciar Sesión')
-                    }, 3000);
-
-                } catch (error) {
-                    console.log("No se pudo actualizar la contraseña: ", error);
+                        type: "error",
+                        text1: "La contraseña debe tener al menos 8 caracteres"
+                    });
+                    return;
+                }else{
+                    try {
+                        const prefixedNewPassword = `EST${newPassword}`;
+                        const prefixedConfirmPassword = `EST${confirmPassword}`;
+                        // Aquí puedes agregar la lógica para guardar la nueva contraseña en el backend
+                        const response = await axios.post(`${API_URL_BACKEND}/estudiante/nueva-password/${tokenvalidatepass}`, {
+                            password: prefixedNewPassword,
+                            confirmarPassword: prefixedConfirmPassword,
+                        });
+                        console.log("Contraseña cambiada exitosamente");
+    
+                        // Cierra el modal después de guardar la contraseña
+                        setShowModal(false);
+                        Toast.show({
+                            type: 'success',
+                            text1: `${response.data.msg}`
+                        })
+                        setTimeout(() => {
+                            navigation.navigate('Iniciar Sesión')
+                        }, 3000);
+    
+                    } catch (error) {
+                        console.log("No se pudo actualizar la contraseña: ", error);
+                    }
                 }
             }
         }
@@ -152,9 +177,12 @@ export default function TokenValidado() {
                                 placeholder="Nueva contraseña"
                                 secureTextEntry={!showPasswords}
                                 value={newPassword}
-                                onChangeText={setNewPassword}
+                                onChangeText={handleNewPasswordChange}
                             />
                         </View>
+                            {newPassword.length < 8 && newPassword.length > 0 && (
+                                <Text style={styles.errorText}>La contraseña debe tener al menos 8 caracteres.</Text>
+                            )}
                         <View style={styles.passwordContainer}>
                             <Text style={styles.prefix}>EST</Text>
                             <TextInput
@@ -162,9 +190,12 @@ export default function TokenValidado() {
                                 placeholder="Confirmar nueva contraseña"
                                 secureTextEntry={!showPasswords}
                                 value={confirmPassword}
-                                onChangeText={setConfirmPassword}
+                                onChangeText={handleConfirmPasswordChange}
                             />
                         </View>
+                            {confirmPassword.length < 8 && confirmPassword.length > 0 && (
+                                <Text style={styles.errorText}>La contraseña debe tener al menos 8 caracteres.</Text>
+                            )}
                         <View style={styles.checkboxContainer}>
                             <TouchableOpacity onPress={() => setShowPasswords(!showPasswords)}>
                                 <Text style={styles.checkboxText}>
@@ -286,5 +317,9 @@ const styles = StyleSheet.create({
     checkboxText: {
         fontSize: 16,
         color: '#007BFF',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 12,
     },
 });
