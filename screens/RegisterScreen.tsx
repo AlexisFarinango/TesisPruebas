@@ -140,7 +140,10 @@ export default function RegistroEstudiante() {
                 } else if (status === 409) {
                     console.error("Email o cédula ya registrados.");
                     Toast.show({ type: 'error', text1: 'Email o cédula ya registrados' });
-                } else if (status === 500) {
+                } else if (status === 422) {
+                    console.error("La fotografía ingresada no contiene un rostro.");
+                    Toast.show({ type: 'error', text1: 'La fotografía tomada no contiene un rostro' });
+                }else if (status === 500) {
                     console.error("Error del servidor (500)");
                     Toast.show({ type: 'error', text1: 'Error en el servidor' });
                 } else {
@@ -363,7 +366,7 @@ export default function RegistroEstudiante() {
                                     onPress={() => requestCameraPermission(setFieldValue)}
                                     onBlur={handleBlur('fotografia')} 
                                 >
-                                    <Text style={styles.buttonText}>Tomar Foto</Text>
+                                    <Text style={styles.buttonText}>Tomar Fotografía del Rostro</Text>
                                 </TouchableOpacity>
                                 {/* Mostrar imagen capturada */}
                                 {selectedImage && (
