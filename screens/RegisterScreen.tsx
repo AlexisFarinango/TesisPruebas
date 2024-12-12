@@ -190,7 +190,7 @@ export default function RegistroEstudiante() {
                     Para comenzar con su registro, por favor asegúrese de lo siguiente al tomarse su fotografía
                     </Text>
                     <Image source={require('../icons/camara.png')} style={styles.modalImage} />
-                    <Text style={styles.modalText}>🔹 Su rostro debe observarse por completo</Text>
+                    <Text style={styles.modalText}>🔹 Su rostro debe observarse por completo y no debe tener accesorios</Text>
                     <Text style={styles.modalText}>🔹 Recuerda estar en un lugar iluminado</Text>
                     <Text style={styles.modalText}>🔹 Procura que la fotografía sea lo más clara posible</Text>
                     <Text style={styles.modalText}>
