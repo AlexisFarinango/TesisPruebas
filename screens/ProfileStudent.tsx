@@ -61,13 +61,13 @@ export default function PerfilEstudiante() {
             formData.append('telefono', values.telefono);
 
             // Verificar si hay una nueva fotografía y agregarla al FormData
-            if (values.fotografia) {
-                formData.append('fotografia', {
-                    uri: values.fotografia,
-                    type: 'image/jpeg', // Cambia esto si es necesario
-                    name: values.fotografia.split('/').pop() || `photo_${Date.now()}.jpg`,
-                });
-            }
+            // if (values.fotografia) {
+            //     formData.append('fotografia', {
+            //         uri: values.fotografia,
+            //         type: 'image/jpeg', // Cambia esto si es necesario
+            //         name: values.fotografia.split('/').pop() || `photo_${Date.now()}.jpg`,
+            //     });
+            // }
 
             console.log("Este es el formulario:", JSON.stringify(formData, null, 2));
 
@@ -99,33 +99,33 @@ export default function PerfilEstudiante() {
         }
     };
 
-    const requestCameraPermission = async (setFieldValue) => {
-        try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.CAMERA,
-                {
-                    title: 'Permiso de Cámara',
-                    message: 'La aplicación necesita acceso a la cámara.',
-                    buttonNeutral: 'Preguntar luego',
-                    buttonNegative: 'Cancelar',
-                    buttonPositive: 'Aceptar',
-                },
-            );
+    // const requestCameraPermission = async (setFieldValue) => {
+    //     try {
+    //         const granted = await PermissionsAndroid.request(
+    //             PermissionsAndroid.PERMISSIONS.CAMERA,
+    //             {
+    //                 title: 'Permiso de Cámara',
+    //                 message: 'La aplicación necesita acceso a la cámara.',
+    //                 buttonNeutral: 'Preguntar luego',
+    //                 buttonNegative: 'Cancelar',
+    //                 buttonPositive: 'Aceptar',
+    //             },
+    //         );
 
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                launchCamera({ mediaType: 'photo' }, (response) => {
-                    if (response.assets) {
-                        setFieldValue('fotografia', response.assets[0].uri);
-                        console.log("foto tomada:", response.assets[0].uri);
-                    }
-                });
-            } else {
-                console.log('Permiso de cámara denegado');
-            }
-        } catch (err) {
-            console.warn(err);
-        }
-    };
+    //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //             launchCamera({ mediaType: 'photo' }, (response) => {
+    //                 if (response.assets) {
+    //                     setFieldValue('fotografia', response.assets[0].uri);
+    //                     console.log("foto tomada:", response.assets[0].uri);
+    //                 }
+    //             });
+    //         } else {
+    //             console.log('Permiso de cámara denegado');
+    //         }
+    //     } catch (err) {
+    //         console.warn(err);
+    //     }
+    // };
 
     const styles = StyleSheet.create({
         container: {
@@ -249,7 +249,7 @@ export default function PerfilEstudiante() {
                             direccion: userData.direccion || '',
                             ciudad: userData.ciudad || '',
                             telefono: userData.telefono || '',
-                            fotografia: userData.fotografia || '',
+                            // fotografia: userData.fotografia || '',
                         }}
                         validationSchema={validationSchema}
                         onSubmit={handleUpdate}
@@ -259,14 +259,14 @@ export default function PerfilEstudiante() {
                                 <View style={styles.imageContainer}>
                                     <Image
                                         source={{
-                                            uri: values.fotografia || "https://img.freepik.com/vector-premium/icono-perfil-usuario-estilo-plano-ilustracion-vector-avatar-miembro-sobre-fondo-aislado-concepto-negocio-signo-permiso-humano_157943-15752.jpg",
+                                            uri: userData.fotografia || "https://img.freepik.com/vector-premium/icono-perfil-usuario-estilo-plano-ilustracion-vector-avatar-miembro-sobre-fondo-aislado-concepto-negocio-signo-permiso-humano_157943-15752.jpg",
                                         }}
                                         style={styles.profileImage}
                                     />
                                 </View>
-                                <TouchableOpacity style={styles.buttonfoto} onPress={() => requestCameraPermission(setFieldValue)}>
-                                    <Text style={styles.buttonText}>Actualizar Foto</Text>
-                                </TouchableOpacity>
+                                <View style={styles.buttonfoto}>
+                                    <Text style={styles.buttonText}>Fotografía</Text>
+                                </View>
                                 <ScrollView>
                                     <View style={styles.profileSection}>
                                         <Text style={styles.label}>Nombres:</Text>

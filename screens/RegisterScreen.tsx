@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { TouchableOpacity, Button, Image, PermissionsAndroid, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Modal, TouchableOpacity, Button, Image, PermissionsAndroid, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { launchCamera } from "react-native-image-picker";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from "axios";
@@ -36,6 +36,7 @@ export default function RegistroEstudiante() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const navigation = useNavigation();
     const [imageError, setImageError] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(true);
 
 
     // Solicitar permiso de cámara y capturar foto
@@ -77,14 +78,13 @@ export default function RegistroEstudiante() {
     // Manejar el envío del formulario
     const handleSubmit = async (values) => {
         console.log(values.fotografia.uri);
-        
         if (!values.fotografia?.uri) {
             Toast.show({
                 type: "error",
                 text1: "No se ha capturado una fotografía"
             }); // Establecer mensaje de error
             console.log("No se ha capturado una fotografía");
-            
+
             return; // Detener el envío si no hay imagen
         } else {
             setImageError(''); // Limpiar el mensaje de error si hay imagen
@@ -143,7 +143,7 @@ export default function RegistroEstudiante() {
                 } else if (status === 422) {
                     console.error("La fotografía ingresada no contiene un rostro.");
                     Toast.show({ type: 'error', text1: 'La fotografía tomada no contiene un rostro' });
-                }else if (status === 500) {
+                } else if (status === 500) {
                     console.error("Error del servidor (500)");
                     Toast.show({ type: 'error', text1: 'Error en el servidor' });
                 } else {
@@ -179,6 +179,44 @@ export default function RegistroEstudiante() {
     };
     return (
         <View style={{ flex: 1 }}>
+            <Modal
+                visible={isModalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setIsModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitle}>
+                    Para comenzar con su registro, por favor asegúrese de lo siguiente al tomarse su fotografía
+                    </Text>
+                    <Image source={require('../icons/camara.png')} style={styles.modalImage} />
+                    <Text style={styles.modalText}>🔹 Tu rostro se debe observar por completo</Text>
+                    <Text style={styles.modalText}>🔹 Recuerda estar en un lugar iluminado</Text>
+                    <Text style={styles.modalText}>🔹 Procura que la fotografía sea lo más clara posible</Text>
+                    <Text style={styles.modalText}>
+                    ⚠️Este proceso es único y debe realizarse solo si cumples las condiciones mencionadas, para que tu usuario funcione correctamente.⚠️
+                    </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <TouchableOpacity
+                            style={styles.modalButton}
+                            onPress={() => {
+                                setIsModalVisible(false); // Cierra el modal
+                            }}
+                        >
+                            <Text style={styles.buttonText}>Entendido</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.modalButtonregresar}
+                            onPress={() => {
+                                setIsModalVisible(false); // Cierra el modal
+                                navigation.goBack(); // Retrocede a la página anterior
+                            }}
+                        >
+                            <Text style={styles.buttonText}>Realizar registro en otro momento</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
             <View>
                 <Text style={styles.title}>Nuevo Estudiante</Text>
             </View>
@@ -364,7 +402,7 @@ export default function RegistroEstudiante() {
                                 <TouchableOpacity
                                     style={styles.customButton}
                                     onPress={() => requestCameraPermission(setFieldValue)}
-                                    onBlur={handleBlur('fotografia')} 
+                                    onBlur={handleBlur('fotografia')}
                                 >
                                     <Text style={styles.buttonText}>Tomar Fotografía del Rostro</Text>
                                 </TouchableOpacity>
@@ -511,5 +549,53 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginVertical: 5,
         textAlign: 'center', // Centra el mensaje
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.9)', // Fondo semi-transparente
+    },
+    modalImage: {
+        width: '50%',
+        height: '30%',
+        // marginBottom: 10,
+    },
+    modalText: {
+        color: '#fff',
+        fontSize: 20,
+        textAlign: 'center',
+        marginBottom: 20,
+        marginTop: 5,
+        paddingHorizontal: 20,
+    },
+    modalTitle: {
+        color: '#fff',
+        textAlign: 'center',
+        paddingHorizontal: 20,
+        fontSize: 24,
+        fontWeight: "bold",
+    },
+    modalButton: {
+        // backgroundColor: '#007BFF', // Color de fondo del botón
+        backgroundColor: '#007BFF',
+        padding: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#0056b3', // Color del borde
+        marginHorizontal: 10, // Espaciado entre los botones
+        flex: 1, // Hace que los botones ocupen el mismo espacio
+        alignItems: 'center', // Centra el texto en el botón
+    },
+    modalButtonregresar: {
+        // backgroundColor: '#007BFF', // Color de fondo del botón
+        backgroundColor: '#e52510',
+        padding: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#e52510', // Color del borde
+        marginHorizontal: 10, // Espaciado entre los botones
+        flex: 1, // Hace que los botones ocupen el mismo espacio
+        alignItems: 'center', // Centra el texto en el botón
     },
 });
